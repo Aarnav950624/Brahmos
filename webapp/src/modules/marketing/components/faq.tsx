@@ -5,18 +5,28 @@ import { cn } from "@/lib/utils";
 import { Section } from "@/modules/marketing/components/section";
 import { FAQS } from "@/modules/marketing/data";
 
-export function FaqSection() {
+export function FaqSection({
+  items = FAQS,
+  eyebrow = "FAQ",
+  title = "Questions teams ask first",
+  description = "Clear answers about safety, AI, offline care, and identity.",
+}: {
+  items?: Array<{ q: string; a: string }>;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+}) {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
     <Section
       id="faq"
-      eyebrow="FAQ"
-      title="Questions teams ask first"
-      description="Clear answers about safety, AI, offline care, and identity."
+      eyebrow={eyebrow}
+      title={title}
+      description={description}
     >
       <div className="mx-auto max-w-3xl space-y-2">
-        {FAQS.map((item, i) => {
+        {items.map((item, i) => {
           const isOpen = open === i;
           return (
             <div
