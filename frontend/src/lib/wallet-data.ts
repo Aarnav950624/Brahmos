@@ -30,9 +30,20 @@ export interface WalletOverview {
 }
 
 // Synthetic Demo Data
-export const DEMO_FAMILY: FamilyMember[] = [
+import { mockFamilyMembers } from "@/lib/mock-data";
+
+export const DEMO_FAMILY: FamilyMember[] = mockFamilyMembers.map(m => ({
+  id: m.id,
+  name: m.name,
+  age: m.age,
+  gender: m.gender,
+  relation: m.relationship,
+  village: "Navjeevan Gram"
+}));
+
+const old_DEMO_FAMILY = [
   {
-    id: "fam-001",
+    id: "member-ramesh",
     name: "Ramesh Patel",
     age: 42,
     gender: "Male",
@@ -40,7 +51,7 @@ export const DEMO_FAMILY: FamilyMember[] = [
     village: "Navjeevan Gram"
   },
   {
-    id: "fam-002",
+    id: "member-sita",
     name: "Sita Patel",
     age: 39,
     gender: "Female",
@@ -48,7 +59,7 @@ export const DEMO_FAMILY: FamilyMember[] = [
     village: "Navjeevan Gram"
   },
   {
-    id: "fam-003",
+    id: "member-aarav",
     name: "Aarav Patel",
     age: 12,
     gender: "Male",
@@ -61,7 +72,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   // Ramesh Data
   {
     id: "evt-001",
-    familyMemberId: "fam-001",
+    familyMemberId: "member-ramesh",
     date: "2026-09-20",
     type: "FOLLOW_UP",
     title: "Doctor Follow-up",
@@ -70,7 +81,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   },
   {
     id: "evt-002",
-    familyMemberId: "fam-001",
+    familyMemberId: "member-ramesh",
     date: "2026-09-15",
     type: "REPORT",
     title: "Complete Blood Count (CBC)",
@@ -80,7 +91,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   },
   {
     id: "evt-003",
-    familyMemberId: "fam-001",
+    familyMemberId: "member-ramesh",
     date: "2026-09-13",
     type: "MEDICINE",
     title: "Medicine Fulfilled",
@@ -90,7 +101,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   },
   {
     id: "evt-004",
-    familyMemberId: "fam-001",
+    familyMemberId: "member-ramesh",
     date: "2026-09-12",
     type: "PRESCRIPTION",
     title: "New Prescription",
@@ -100,7 +111,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   },
   {
     id: "evt-005",
-    familyMemberId: "fam-001",
+    familyMemberId: "member-ramesh",
     date: "2026-09-12",
     type: "CONSULTATION",
     title: "Doctor Consultation",
@@ -112,7 +123,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   // Sita Data
   {
     id: "evt-006",
-    familyMemberId: "fam-002",
+    familyMemberId: "member-sita",
     date: "2026-08-10",
     type: "VACCINATION",
     title: "Tetanus Booster",
@@ -123,7 +134,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   // Aarav Data
   {
     id: "evt-007",
-    familyMemberId: "fam-003",
+    familyMemberId: "member-aarav",
     date: "2026-09-01",
     type: "CONSULTATION",
     title: "Pediatric Consultation",
@@ -132,7 +143,7 @@ export const DEMO_TIMELINE: HealthTimelineEvent[] = [
   },
   {
     id: "evt-008",
-    familyMemberId: "fam-003",
+    familyMemberId: "member-aarav",
     date: "2026-09-01",
     type: "VACCINATION",
     title: "Typhoid Vaccine",

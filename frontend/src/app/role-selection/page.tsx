@@ -7,6 +7,8 @@ import { User, Activity, Stethoscope, Pill, Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuthStore, DemoUser, UserRole, getRolePath } from "@/stores/authStore";
+import { resetDemoData } from "@/lib/mock-data";
+import { Database } from "lucide-react";
 
 export default function RoleSelectionPage() {
   const router = useRouter();
@@ -97,6 +99,18 @@ export default function RoleSelectionPage() {
         <Link href="/" className="text-blue-600 hover:underline font-medium">
           &larr; Back to Home
         </Link>
+      </div>
+    
+      <div className="mt-8 text-center border-t border-slate-200 pt-6 max-w-md mx-auto">
+        <p className="text-xs text-slate-500 mb-3 flex items-center justify-center gap-1.5">
+          <Database className="h-3 w-3" /> Aggregated Synthetic Demo Data Environment
+        </p>
+        <button 
+          onClick={resetDemoData}
+          className="text-xs font-semibold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 px-4 py-2 rounded-full transition-colors border border-rose-200"
+        >
+          Reset Demo Data
+        </button>
       </div>
     </div>
   );
