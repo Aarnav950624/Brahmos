@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { ListenButton } from "@/components/ui/listen-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Mic, MicOff, AlertCircle, AlertTriangle, CheckCircle, Activity, Loader2, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -24,8 +26,9 @@ interface SymptomResponse {
 }
 
 export default function SymptomChecker() {
+  const { t, language } = useTranslation();
   const [symptoms, setSymptoms] = useState("");
-  const [language, setLanguage] = useState("en-IN");
+
   const [isRecording, setIsRecording] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -186,16 +189,6 @@ export default function SymptomChecker() {
                 <Activity className="h-5 w-5 text-blue-600" />
                 Input Symptoms
               </CardTitle>
-              <select 
-                className="text-sm border border-slate-300 rounded-md px-2 py-1 bg-white outline-none focus:border-blue-500"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                disabled={isRecording || isAnalyzing}
-              >
-                <option value="en-IN">English</option>
-                <option value="hi-IN">हिंदी (Hindi)</option>
-                <option value="gu-IN">ગુજરાતી (Gujarati)</option>
-              </select>
             </div>
           </CardHeader>
           

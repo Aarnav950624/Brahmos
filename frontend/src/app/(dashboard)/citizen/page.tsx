@@ -7,12 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import Link from "next/link";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { ListenButton } from "@/components/ui/listen-button";
 
 
 export default function CitizenDashboard() {
   const { name, village, healthWallet, alerts } = mockCitizen;
   const user = useAuthStore((state) => state.user);
   const [nudges, setNudges] = useState<any[]>([]);
+  const { t } = useTranslation();
   
   useEffect(() => {
     if (user) {
@@ -51,7 +54,7 @@ export default function CitizenDashboard() {
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-5 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <Bell className="h-5 w-5 text-blue-600" /> ArogyaAI Updates
+              <Bell className="h-5 w-5 text-blue-600" /> {t("dashboard.updates")}
             </h2>
             <Link href="/citizen/notifications">
               <Button variant="ghost" size="sm" className="text-blue-700 text-xs font-semibold">
@@ -79,17 +82,17 @@ export default function CitizenDashboard() {
         </div>
       )}
 
-      {/* Quick Actions */}
+      {/* {t("dashboard.quickActions")} */}
       <div>
-        <h2 className="text-lg font-bold text-slate-800 mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-bold text-slate-800 mb-4">{t("dashboard.quickActions")}</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
             { label: "Emergency SOS", icon: Activity, color: "bg-red-600 text-white animate-pulse", href: "/citizen/sos" },
-            { label: "Check Symptoms", icon: Activity, color: "bg-red-100 text-red-700", href: "/citizen/symptom-checker" },
+            { label: t("dashboard.checkSymptoms"), icon: Activity, color: "bg-red-100 text-red-700", href: "/citizen/symptom-checker" },
             { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700", href: "#" },
-            { label: "My Health Wallet", icon: Heart, color: "bg-pink-100 text-pink-700", href: "/citizen/health-wallet" },
-            { label: "My Medicines", icon: Pill, color: "bg-amber-100 text-amber-700", href: "#" },
-            { label: "Find Care", icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "/citizen/care-map" },
+            { label: t("dashboard.healthRecords"), icon: Heart, color: "bg-pink-100 text-pink-700", href: "/citizen/health-wallet" },
+            { label: t("dashboard.welfareSchemes"), icon: Shield, color: "bg-purple-100 text-purple-700", href: "/citizen/schemes" },
+            { label: t("dashboard.nearbyCare"), icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "/citizen/care-map" },
           ].map((action, i) => (
             <a href={action.href} key={i}>
               <Button variant="outline" className="h-full w-full py-4 flex flex-col gap-2 items-center justify-center border-slate-200 hover:border-slate-300 bg-white">

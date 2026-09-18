@@ -1,4 +1,5 @@
 "use client";
+import { useTranslation } from "@/lib/i18n/useTranslation";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,6 +14,7 @@ import { useAuthStore, UserRole } from "@/stores/authStore";
 export function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
+  const { t } = useTranslation();
 
   if (!user) return null;
 

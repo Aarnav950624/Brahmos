@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLanguageStore } from "@/stores/languageStore";
+import { useTranslation } from "@/lib/i18n/useTranslation";
+import { Globe } from "lucide-react";
 
 
 import { Bell, Search, Menu, LogOut } from "lucide-react";
@@ -12,6 +15,8 @@ import { RoleBadge } from "@/components/ui/role-badge";
 export function TopBar() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const { language, setLanguage } = useLanguageStore();
+  const { t } = useTranslation();
 
   if (!user) return null;
 
@@ -29,7 +34,7 @@ export function TopBar() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-500" />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t("common.searchPlaceholder")}
             className="h-9 w-64 rounded-md border border-slate-200 bg-slate-50 pl-9 pr-4 text-sm outline-none focus:border-blue-500"
           />
         </div>
@@ -37,8 +42,24 @@ export function TopBar() {
 
       <div className="flex items-center gap-4">
         <div className="hidden sm:flex items-center gap-2 text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
-          Demo Mode
+          {t("common.demoMode")}
         </div>
+        
+        {/* Language Switcher */}
+        <div className="flex items-center gap-1 border border-slate-200 rounded-md p-1 bg-slate-50">
+          <Globe className="h-4 w-4 text-slate-500 ml-1" />
+          <select 
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as any)}
+            className="bg-transparent text-xs font-medium text-slate-700 border-none outline-none focus:ring-0 cursor-pointer"
+            aria-label="Select Language"
+          >
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="gu">ગુજરાતી</option>
+          </select>
+        </div>
+
         {user.role === "CITIZEN" || user.role === "ASHA_WORKER" ? (
           <Link href={user.role === "CITIZEN" ? "/citizen/notifications" : "/asha/notifications"}>
             <Button variant="ghost" size="icon" className="relative">
