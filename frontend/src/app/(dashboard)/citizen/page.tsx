@@ -34,7 +34,7 @@ export default function CitizenDashboard() {
             { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700", href: "#" },
             { label: "Check Symptoms", icon: Activity, color: "bg-red-100 text-red-700", href: "/citizen/symptom-checker" },
             { label: "Book Doctor", icon: Stethoscope, color: "bg-purple-100 text-purple-700", href: "#" },
-            { label: "Health Wallet", icon: Heart, color: "bg-pink-100 text-pink-700", href: "#" },
+            { label: "My Health Wallet", icon: Heart, color: "bg-pink-100 text-pink-700", href: "/citizen/health-wallet" },
             { label: "My Medicines", icon: Pill, color: "bg-amber-100 text-amber-700", href: "#" },
             { label: "Find Care", icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "#" },
           ].map((action, i) => (

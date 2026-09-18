@@ -23,7 +23,7 @@ export function Sidebar() {
       links = [
         { name: "Dashboard", href: "/citizen", icon: Home },
         { name: "Check Symptoms", href: "/citizen/symptom-checker", icon: SearchIcon },
-        { name: "Health Wallet", href: "#", icon: Heart },
+        { name: "Health Wallet", href: "/citizen/health-wallet", icon: Heart },
         { name: "Consultations", href: "#", icon: Stethoscope },
         { name: "Medicines", href: "#", icon: Pill },
         { name: "CareMap", href: "#", icon: MapPin },

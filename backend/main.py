@@ -8,9 +8,10 @@ app = FastAPI(
     version="1.0.0",
 )
 
-from app.api.v1 import ai
+from app.api.v1 import ai, wallet
 
 app.include_router(ai.router, prefix="/api/v1/ai", tags=["AI"])
+app.include_router(wallet.router, prefix="/api/v1/health-wallet", tags=["Health Wallet"])
 
 # Configure CORS for frontend access
 app.add_middleware(
