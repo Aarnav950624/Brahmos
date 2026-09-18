@@ -228,7 +228,41 @@ Restart `npm run dev` after changing Vite env vars.
 
 Obtain Exa / OpenRouter keys from those vendors. Teams must follow each vendor’s terms. Do not paste keys into slides, GitHub, or the frontend.
 
+### Deploy (Vercel + Render)
+
+**Minimum (judges can use the product):** host only `webapp` on Vercel. Demo data lives in the browser (`localStorage`). No keys required.
+
+1. Push the repo to GitHub.
+2. [Vercel](https://vercel.com) → Import project → **Root Directory: `webapp`**.
+3. Framework: Vite. Build: `npm run build`. Output: `dist`.
+4. SPA rewrites are already in `webapp/vercel.json`.
+5. Deploy. Open the `*.vercel.app` URL and use live role login.
+
+**Full (Talk to HealNexus / LLM drafts):** also host `ai-service`.
+
+1. [Render](https://render.com) → New **Web Service** → this repo → **Root Directory: `ai-service`**.
+2. Runtime: Python 3.11+. Start command:
+
+   `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+3. Environment (Render dashboard, never GitHub):
+
+   - `APP_ENV=production`
+   - `CORS_ORIGINS=https://YOUR-APP.vercel.app` (add the exact Vercel URL; `*.vercel.app` is also allowed in code)
+   - `EXA_API_KEY`, `OPENROUTER_API_KEY`
+   - `OPENROUTER_SITE_URL=https://YOUR-APP.vercel.app`
+
+4. Confirm `https://YOUR-RENDER-URL/health` returns `"status":"ok"`.
+5. Back on Vercel, set **Build** env:
+
+   `VITE_AI_API_BASE_URL=https://YOUR-RENDER-URL`
+
+   Redeploy the frontend so Vite bakes that URL in (it is not read at runtime).
+
+**Do not** set Exa/OpenRouter keys on Vercel. Optional Supabase: `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` on Vercel only if you actually run migrations.
+
 ---
+
 
 ## 9. How to run a judge demo (5 minutes)
 
