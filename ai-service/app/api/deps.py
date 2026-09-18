@@ -1,0 +1,105 @@
+from functools import lru_cache
+
+from app.prediction.engines.alert_decision import AlertDecisionService
+from app.prediction.engines.disease_progression import DiseaseProgressionService
+from app.prediction.engines.explainability import ExplainabilityService
+from app.prediction.engines.lifestyle_simulator import LifestyleSimulatorService
+from app.prediction.engines.readmission_risk import ReadmissionRiskService
+from app.prediction.engines.recovery_score import RecoveryScoreService
+from app.prediction.engines.trend_analysis import TrendAnalysisService
+from app.providers.base import KnowledgeProvider
+from app.providers.factory import build_knowledge_provider
+from app.providers.openrouter_provider import OpenRouterLLM
+from app.services.care_companion_service import CareCompanionService
+from app.services.education_service import EducationService
+from app.services.government_guidance_service import GovernmentGuidanceService
+from app.services.emergency_checkup_service import EmergencyCheckupService
+from app.services.health_assistant_service import HealthAssistantService
+from app.services.patient_summary_service import PatientSummaryService
+from app.services.medicine_extract_service import MedicineExtractService
+from app.services.visit_brief_service import VisitBriefService
+
+
+@lru_cache
+def get_knowledge_provider() -> KnowledgeProvider:
+    return build_knowledge_provider()
+
+
+@lru_cache
+def get_openrouter_llm() -> OpenRouterLLM:
+    return OpenRouterLLM()
+
+
+@lru_cache
+def get_care_companion_service() -> CareCompanionService:
+    return CareCompanionService()
+
+
+@lru_cache
+def get_patient_summary_service() -> PatientSummaryService:
+    return PatientSummaryService(get_openrouter_llm())
+
+
+@lru_cache
+def get_visit_brief_service() -> VisitBriefService:
+    return VisitBriefService(get_openrouter_llm())
+
+
+@lru_cache
+def get_medicine_extract_service() -> MedicineExtractService:
+    return MedicineExtractService(get_openrouter_llm())
+
+
+@lru_cache
+def get_health_assistant_service() -> HealthAssistantService:
+    return HealthAssistantService(get_knowledge_provider(), get_openrouter_llm())
+
+
+@lru_cache
+def get_emergency_checkup_service() -> EmergencyCheckupService:
+    return EmergencyCheckupService(get_openrouter_llm())
+
+
+@lru_cache
+def get_education_service() -> EducationService:
+    return EducationService()
+
+
+@lru_cache
+def get_government_guidance_service() -> GovernmentGuidanceService:
+    return GovernmentGuidanceService(get_knowledge_provider())
+
+
+@lru_cache
+def get_recovery_score_service() -> RecoveryScoreService:
+    return RecoveryScoreService()
+
+
+@lru_cache
+def get_readmission_risk_service() -> ReadmissionRiskService:
+    return ReadmissionRiskService()
+
+
+@lru_cache
+def get_disease_progression_service() -> DiseaseProgressionService:
+    return DiseaseProgressionService()
+
+
+@lru_cache
+def get_trend_analysis_service() -> TrendAnalysisService:
+    return TrendAnalysisService()
+
+
+@lru_cache
+def get_lifestyle_simulator_service() -> LifestyleSimulatorService:
+    return LifestyleSimulatorService()
+
+
+@lru_cache
+def get_alert_decision_service() -> AlertDecisionService:
+    return AlertDecisionService()
+
+
+@lru_cache
+def get_explainability_service() -> ExplainabilityService:
+    return ExplainabilityService()
