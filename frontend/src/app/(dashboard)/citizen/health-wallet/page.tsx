@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ReportExplanationModal } from "@/components/ReportExplanationModal";
 import { DEMO_FAMILY, DEMO_TIMELINE, getFamilyOverview, EventType } from "@/lib/wallet-data";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -302,24 +303,7 @@ export default function HealthWallet() {
                         {/* Event Specific Actions */}
                         <div className="flex flex-wrap gap-2">
                           {evt.type === "REPORT" && (
-                            <Dialog>
-                              <DialogTrigger>
-                                <Button variant="outline" size="sm" className="h-8 text-xs">
-                                  <AlertCircle className="mr-1.5 h-3.5 w-3.5" /> Explain this report
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>AI Report Explanation</DialogTitle>
-                                  <DialogDescription>
-                                    Coming soon in the next AI module.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <div className="p-4 bg-amber-50 text-amber-800 rounded-md border border-amber-200 text-sm">
-                                  This feature will interpret laboratory values and provide easy-to-understand health guidance. (Placeholder for next hackathon prompt).
-                                </div>
-                              </DialogContent>
-                            </Dialog>
+                            <ReportExplanationModal reportId={evt.id} reportName={evt.title} />
                           )}
                           
                           <Button variant="ghost" size="sm" className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50">

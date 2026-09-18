@@ -66,3 +66,61 @@ async def process_symptom_check(request: SymptomCheckRequest) -> SymptomCheckRes
     # [Placeholder for actual LLM implementation with instructor/pydantic]
     # For now, always return the safe fallback since we are prioritizing reliability.
     return get_fallback_response(request, is_emergency=False, flags=[])
+
+from app.schemas.ai import ReportAnalysisRequest, ReportAnalysisResponse, ReportFinding, ComparisonInsight
+
+async def analyze_report(request: ReportAnalysisRequest) -> ReportAnalysisResponse:
+    """
+    Simulates AI analyzing a medical report and providing 'What Changed' insights.
+    Uses deterministic synthetic fallbacks for the hackathon demo.
+    """
+    
+    findings = [
+        ReportFinding(
+            parameter="Hemoglobin",
+            value="11.2 g/dL",
+            status="LOW",
+            explanation="Slightly lower than the normal range. May cause fatigue or weakness."
+        ),
+        ReportFinding(
+            parameter="WBC Count",
+            value="7,500 /mcL",
+            status="NORMAL",
+            explanation="White blood cell count is within the healthy range, indicating no major active infection."
+        ),
+        ReportFinding(
+            parameter="Platelets",
+            value="210,000 /mcL",
+            status="NORMAL",
+            explanation="Platelet count is normal, meaning your blood can clot properly."
+        )
+    ]
+    
+    comparison = None
+    if request.include_comparison:
+        comparison = [
+            ComparisonInsight(
+                parameter="Hemoglobin",
+                previous_value="10.5 g/dL",
+                current_value="11.2 g/dL",
+                trend="IMPROVED",
+                explanation="Your hemoglobin levels have improved since your last test, showing a positive response to treatment or diet."
+            ),
+            ComparisonInsight(
+                parameter="WBC Count",
+                previous_value="12,000 /mcL",
+                current_value="7,500 /mcL",
+                trend="IMPROVED",
+                explanation="Your white blood cell count has returned to normal, indicating the previous infection has resolved."
+            )
+        ]
+        
+    return ReportAnalysisResponse(
+        report_name="Complete Blood Count (CBC)",
+        summary="Your overall blood profile looks stable. Hemoglobin is slightly low but has improved compared to your last test. The infection markers have cleared.",
+        findings=findings,
+        comparison=comparison,
+        recommended_action="Continue taking your prescribed iron supplements. Follow up with your doctor as scheduled.",
+        disclaimer="AI interpretation is for informational purposes only. Always consult a doctor for a definitive diagnosis."
+    )
+

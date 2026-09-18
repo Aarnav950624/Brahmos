@@ -14,3 +14,16 @@ async def symptom_check(request: SymptomCheckRequest):
         print(f"Error in symptom_check: {e}")
         from app.services.ai_service import get_fallback_response
         return get_fallback_response(request, is_emergency=False, flags=[])
+
+from app.schemas.ai import ReportAnalysisRequest, ReportAnalysisResponse
+from app.services.ai_service import analyze_report
+
+@router.post("/report-analysis", response_model=ReportAnalysisResponse)
+async def get_report_analysis(request: ReportAnalysisRequest):
+    try:
+        response = await analyze_report(request)
+        return response
+    except Exception as e:
+        print(f"Error in report_analysis: {e}")
+        raise HTTPException(status_code=500, detail="Failed to analyze report")
+
