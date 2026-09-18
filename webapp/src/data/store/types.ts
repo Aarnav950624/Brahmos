@@ -471,7 +471,7 @@ export interface HealNexusStore {
   homeVisits: HomeVisitRow[];
 }
 
-export const STORE_VERSION = 18;
+export const STORE_VERSION = 20;
 export const STORAGE_KEY = "healnexus-dynamic-store-v2";
 
 export const IDS = {
@@ -483,6 +483,10 @@ export const IDS = {
   patient2: "00000000-0000-4000-8000-000000000202",
   patient3User: "00000000-0000-4000-8000-000000000103",
   patient3: "00000000-0000-4000-8000-000000000203",
+  patient4User: "00000000-0000-4000-8000-000000000104",
+  patient4: "00000000-0000-4000-8000-000000000204",
+  patient5User: "00000000-0000-4000-8000-000000000105",
+  patient5: "00000000-0000-4000-8000-000000000205",
   caregiverUser: "00000000-0000-4000-8000-000000000003",
   carePlan: "00000000-0000-4000-8000-000000000301",
   healthWorkerUser: "00000000-0000-4000-8000-000000000004",

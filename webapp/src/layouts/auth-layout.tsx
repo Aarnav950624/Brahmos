@@ -43,11 +43,26 @@ export function AuthLayout() {
             AI-Powered Continuity of Care Platform — doctors stay in control,
             patients never fall through the cracks.
           </p>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-[#64748B]">
+            From Civil Hospital OPD to a Sanand village home visit, HealNexus
+            keeps the same recovery score, readmission risk, and care plan in
+            one thread — so the patient, family, and field worker see what the
+            doctor sees.
+          </p>
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-[#64748B]">
+            Check-ins, medicines, and overdue labs feed a live rule engine.
+            Risk bands move when adherence slips or vitals trend — never as a
+            static label on a demo card.
+          </p>
           <ul className="mt-8 space-y-3 text-sm text-[#334155]">
             {[
               "Doctor-controlled post-discharge intelligence",
               "AI Care Companion educates & monitors — never diagnoses",
               "Built for hospitals, homes, and rural health workers",
+              "Village PHC → CHC → district hospital referral path, with Jan Aushadhi and labs nearby",
+              "Offline Health Card when the network drops on a dusty taluka road",
+              "Gujarati, Hindi, and English — same safety rails in every language",
+              "Medicine unavailable alerts go to the health worker — no guessed substitutes",
             ].map((item) => (
               <li key={item} className="flex items-start gap-2.5">
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#14B8A6]" />

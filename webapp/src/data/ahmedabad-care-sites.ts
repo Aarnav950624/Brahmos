@@ -2,6 +2,7 @@ import {
   AHMEDABAD_DEMO_HOSPITALS,
   haversineKm,
 } from "@/data/ahmedabad-hospitals";
+import { AHMEDABAD_DISTRICT_VILLAGES } from "@/data/ahmedabad-villages";
 import type { DemoHospital } from "@/types/domain";
 
 export type CareKind =
@@ -529,7 +530,58 @@ const AHMEDABAD_MEDICAL_SHOPS: CareSite[] = [
   }),
 ];
 
+function villageFieldSites(): CareSite[] {
+  return AHMEDABAD_DISTRICT_VILLAGES.flatMap((v) => [
+    {
+      id: `phc-village-${v.id}`,
+      name: `PHC ${v.name}`,
+      hospital_type: "government",
+      care_kind: "phc" as const,
+      rural_tier: 0,
+      hours: "08:00-17:00",
+      latitude: v.lat,
+      longitude: v.lng,
+      address: `${v.name}, ${v.taluka} taluka, Ahmedabad district, Gujarat`,
+      area: v.name,
+      city: "Ahmedabad",
+      pmjay_empanelled: false,
+      is_emergency: false,
+      phone: "108",
+      services: [
+        "Village OPD",
+        "ASHA coordination",
+        "NCD register",
+        "Basic medicines",
+        v.catchment,
+      ],
+    },
+    shop({
+      id: `jan-aushadhi-village-${v.id}`,
+      name: `Jan Aushadhi Kendra — ${v.name}`,
+      lat: v.lat + 0.004,
+      lng: v.lng + 0.003,
+      address: `Near PHC, ${v.name}`,
+      area: v.name,
+      hours: "09:00-18:00",
+      phone: "18001808080",
+      government: true,
+      services: ["Generic medicines", "Scheme NCD drugs", "Low-cost chronic meds"],
+    }),
+    shop({
+      id: `medical-village-${v.id}`,
+      name: `${v.name} Medical Stores`,
+      lat: v.lat - 0.003,
+      lng: v.lng + 0.002,
+      address: `Main bazaar, ${v.name}, ${v.taluka}`,
+      area: v.name,
+      hours: "08:00-21:00",
+      services: ["Retail pharmacy", "BP/sugar strips", "ORS"],
+    }),
+  ]);
+}
+
 const EXTRA_SITES: CareSite[] = [
+  ...villageFieldSites(),
   {
     id: "phc-sabarmati",
     name: "PHC Sabarmati",
