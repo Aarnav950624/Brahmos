@@ -44,9 +44,9 @@ export function Sidebar() {
     case "DOCTOR":
       links = [
         { name: "Dashboard", href: "/doctor", icon: Home },
-        { name: "Consultation Queue", href: "#", icon: Clock },
-        { name: "Patients", href: "#", icon: Users },
-        { name: "Prescriptions", href: "#", icon: FileText },
+        { name: "Consultation Queue", href: "/doctor/queue", icon: Clock },
+        { name: "Patients", href: "/doctor/patients", icon: Users },
+        { name: "Consultations", href: "#", icon: Stethoscope },
         { name: "Follow-ups", href: "#", icon: ClipboardList },
       ];
       break;
