@@ -77,6 +77,18 @@ export default function AddVisit({ params }: { params: { id: string } }) {
               <Button className="w-full bg-red-600 hover:bg-red-700 mt-4">
                 Escalate to Doctor
               </Button>
+              
+              {riskData.indicators.some((ind: any) => ind.priority === "EMERGENCY" || ind.priority === "HIGH") && (
+                <div className="p-4 bg-red-600 rounded-lg shadow-md text-white space-y-3 mt-4">
+                  <h3 className="font-bold flex items-center gap-2"><AlertCircle className="w-5 h-5"/> Emergency Guidance</h3>
+                  <p className="text-sm">Seek immediate emergency medical assistance. Do not delay care.</p>
+                  <Link href="/citizen/sos">
+                    <Button variant="secondary" className="w-full text-red-700 font-bold bg-white hover:bg-red-50">
+                      Open Emergency SOS
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

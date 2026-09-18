@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Mic, MicOff, AlertCircle, AlertTriangle, CheckCircle, Activity, Loader2, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -326,9 +327,11 @@ export default function SymptomChecker() {
                     Book Doctor <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                   {result.urgency === "EMERGENCY" && (
-                    <Button className="bg-red-600 hover:bg-red-700 text-white animate-pulse shadow-lg shadow-red-500/30">
-                      Emergency Help
-                    </Button>
+                    <Link href="/citizen/sos">
+                      <Button className="bg-red-600 hover:bg-red-700 text-white animate-pulse shadow-lg shadow-red-500/30">
+                        Emergency Help
+                      </Button>
+                    </Link>
                   )}
                 </div>
               </CardFooter>

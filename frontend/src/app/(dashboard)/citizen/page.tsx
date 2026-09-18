@@ -31,12 +31,12 @@ export default function CitizenDashboard() {
         <h2 className="text-lg font-bold text-slate-800 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
-            { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700", href: "#" },
+            { label: "Emergency SOS", icon: Activity, color: "bg-red-600 text-white animate-pulse", href: "/citizen/sos" },
             { label: "Check Symptoms", icon: Activity, color: "bg-red-100 text-red-700", href: "/citizen/symptom-checker" },
-            { label: "Book Doctor", icon: Stethoscope, color: "bg-purple-100 text-purple-700", href: "#" },
+            { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700", href: "#" },
             { label: "My Health Wallet", icon: Heart, color: "bg-pink-100 text-pink-700", href: "/citizen/health-wallet" },
             { label: "My Medicines", icon: Pill, color: "bg-amber-100 text-amber-700", href: "#" },
-            { label: "Find Care", icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "#" },
+            { label: "Find Care", icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "/citizen/care-map" },
           ].map((action, i) => (
             <a href={action.href} key={i}>
               <Button variant="outline" className="h-full w-full py-4 flex flex-col gap-2 items-center justify-center border-slate-200 hover:border-slate-300 bg-white">
