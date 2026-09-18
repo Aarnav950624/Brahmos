@@ -26,9 +26,9 @@ export function Sidebar() {
         { name: "Health Wallet", href: "/citizen/health-wallet", icon: Heart },
         { name: "My Requests", href: "/citizen/requests", icon: Bell },
         { name: "Govt Schemes", href: "/citizen/schemes", icon: FileText },
+        { name: "CareMap", href: "/citizen/care-map", icon: MapPin },
         { name: "Consultations", href: "#", icon: Stethoscope },
         { name: "Medicines", href: "#", icon: Pill },
-        { name: "CareMap", href: "#", icon: MapPin },
         { name: "Awareness", href: "#", icon: BookOpen },
         { name: "Profile", href: "#", icon: User },
       ];
@@ -39,6 +39,7 @@ export function Sidebar() {
         { name: "Households", href: "/asha/households", icon: Users },
         { name: "Visits", href: "#", icon: Activity },
         { name: "Risk Alerts", href: "#", icon: FileWarning },
+        { name: "CareMap", href: "/citizen/care-map", icon: MapPin },
         { name: "Follow-ups", href: "#", icon: ClipboardList },
         { name: "Sync Queue", href: "#", icon: Clock },
       ];
