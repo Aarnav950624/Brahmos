@@ -25,6 +25,7 @@ export function Sidebar() {
         { name: "Check Symptoms", href: "/citizen/symptom-checker", icon: SearchIcon },
         { name: "Health Wallet", href: "/citizen/health-wallet", icon: Heart },
         { name: "My Requests", href: "/citizen/requests", icon: Bell },
+        { name: "Govt Schemes", href: "/citizen/schemes", icon: FileText },
         { name: "Consultations", href: "#", icon: Stethoscope },
         { name: "Medicines", href: "#", icon: Pill },
         { name: "CareMap", href: "#", icon: MapPin },

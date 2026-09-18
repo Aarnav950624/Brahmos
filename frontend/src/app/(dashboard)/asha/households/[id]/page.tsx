@@ -25,7 +25,17 @@ const DEMO_MEMBERS = [
   }
 ];
 
+import { useState, useEffect } from "react";
+
 export default function HouseholdDetail({ params }: { params: { id: string } }) {
+  const [awareness, setAwareness] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/api/v1/asha/households/${params.id}/scheme-awareness`)
+      .then(r => r.json())
+      .then(setAwareness)
+      .catch(() => {});
+  }, [params.id]);
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-12">
       <div className="flex items-center gap-4">
@@ -41,6 +51,26 @@ export default function HouseholdDetail({ params }: { params: { id: string } }) 
       </div>
 
       <div className="space-y-4">
+        {awareness && (
+          <Card className="bg-blue-50 border-blue-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-blue-900 text-sm font-bold flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" /> Scheme Awareness
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-blue-800 mb-2">{awareness.notes}</p>
+              <div className="flex flex-wrap gap-2">
+                {awareness.potentially_relevant_categories.map((cat: string, idx: number) => (
+                  <Badge key={idx} variant="outline" className="bg-white text-blue-700 border-blue-300">
+                    {cat.replace("_", " ")}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <h2 className="text-lg font-bold text-slate-900">Household Members</h2>
         
         <div className="space-y-4">
