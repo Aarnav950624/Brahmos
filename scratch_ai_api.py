@@ -1,46 +1,16 @@
-from fastapi import APIRouter, HTTPException
-from app.schemas.ai import SymptomCheckRequest, SymptomCheckResponse, AskRequest, AskResponse, SourceContext
-from app.services.ai_service import process_symptom_check
+import os
 
-router = APIRouter()
+path = 'c:/Users/Dhairya Bhansali/OneDrive/Documents/CodeCraft/backend/app/api/v1/ai.py'
+with open(path, 'r', encoding='utf-8') as f:
+    content = f.read()
 
-@router.post("/symptom-check", response_model=SymptomCheckResponse)
-async def symptom_check(request: SymptomCheckRequest):
-    try:
-        response = await process_symptom_check(request)
-        return response
-    except Exception as e:
-        # We should ideally have the service handle fallback, but as a last resort:
-        print(f"Error in symptom_check: {e}")
-        from app.services.ai_service import get_fallback_response
-        return get_fallback_response(request, is_emergency=False, flags=[])
+# Make sure we import AskRequest and AskResponse and SourceContext
+content = content.replace(
+    'from app.schemas.ai import SymptomCheckRequest, SymptomCheckResponse, MedicalReportUpload, MedicalReportAnalysis, CompareReportRequest, CompareReportResponse',
+    'from app.schemas.ai import SymptomCheckRequest, SymptomCheckResponse, MedicalReportUpload, MedicalReportAnalysis, CompareReportRequest, CompareReportResponse, AskRequest, AskResponse, SourceContext'
+)
 
-from app.schemas.ai import ReportAnalysisRequest, ReportAnalysisResponse
-from app.services.ai_service import analyze_report
-
-@router.post("/report-analysis", response_model=ReportAnalysisResponse)
-async def get_report_analysis(request: ReportAnalysisRequest):
-    try:
-        response = await analyze_report(request)
-        return response
-    except Exception as e:
-        print(f"Error in report_analysis: {e}")
-        raise HTTPException(status_code=500, detail="Failed to analyze report")
-
-from app.schemas.ai import RiskIndicatorRequest, RiskIndicatorResponse
-from app.services.ai_service import calculate_risk_indicators
-
-@router.post("/risk-indicators", response_model=RiskIndicatorResponse)
-async def get_risk_indicators(request: RiskIndicatorRequest):
-    try:
-        response = calculate_risk_indicators(request)
-        return response
-    except Exception as e:
-        print(f"Error in risk indicators: {e}")
-        raise HTTPException(status_code=500, detail="Failed to calculate risk indicators")
-
-
-
+ask_endpoint = '''
 @router.post("/ask", response_model=AskResponse)
 async def ask_arogyaai(request: AskRequest):
     if request.role != "CITIZEN":
@@ -122,3 +92,11 @@ async def ask_arogyaai(request: AskRequest):
         safety_note=None,
         disclaimer="ArogyaAI provides health information and summaries. It does not replace a doctor."
     )
+'''
+
+content += ask_endpoint
+
+with open(path, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print("Updated ai API")

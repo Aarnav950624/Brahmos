@@ -70,3 +70,25 @@ class RiskIndicatorResponse(BaseModel):
     disclaimer: str = "This is general AI guidance and not a medical diagnosis."
 
 
+
+class AskRequest(BaseModel):
+    user_id: str
+    role: str
+    question: str
+    language: str = "en"
+    family_member_id: Optional[str] = None
+
+class SourceContext(BaseModel):
+    source_type: str
+    source_id: str
+    label: str
+
+class AskResponse(BaseModel):
+    answer: str
+    key_points: List[str]
+    source_context: List[SourceContext]
+    suggested_action: Optional[str] = None
+    action_label: Optional[str] = None
+    action_url: Optional[str] = None
+    safety_note: Optional[str] = None
+    disclaimer: str
