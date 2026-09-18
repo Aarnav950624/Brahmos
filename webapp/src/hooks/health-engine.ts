@@ -7,6 +7,10 @@ import {
   runLifestyleSimulation,
   type PatientObservationBundle,
 } from "@/lib/health-engine";
+import {
+  computeClinicalRisk,
+  overlayClinicalOnHealth,
+} from "@/modules/health-pipeline/clinical-risk";
 import { habitsToAdjustments } from "@/lib/health-engine/habits";
 import {
   getLifestyleHabits,
@@ -44,18 +48,18 @@ export function useObservationBundle(userId?: string | null) {
 /** Full in-app intelligence bundle — instant, no API. */
 export function useHealthIntelligence(userId?: string | null) {
   const observations = useObservationBundle(userId);
-  return useMemo(
-    () => (observations ? evaluateHealth(observations) : null),
-    [observations],
-  );
+  return useMemo(() => {
+    if (!observations) return null;
+    const health = evaluateHealth(observations);
+    const patientId = observations.patient_id;
+    if (!patientId) return health;
+    return overlayClinicalOnHealth(health, computeClinicalRisk(patientId));
+  }, [observations]);
 }
 
 export function useRecoveryScore(userId?: string | null) {
   const observations = useObservationBundle(userId);
-  const intel = useMemo(
-    () => (observations ? evaluateHealth(observations) : null),
-    [observations],
-  );
+  const intel = useHealthIntelligence(userId);
   return {
     data: intel?.recovery ?? null,
     observations,

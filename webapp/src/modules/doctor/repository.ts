@@ -25,6 +25,8 @@ import type {
 import { investigationRepository } from "@/modules/investigations/repository";
 import { patientCaregiverService } from "@/modules/patient/caregiver-arrangements";
 import { organizeCareCompanion } from "@/services/ai.service";
+import { villageLabelFromAddress } from "@/data/ahmedabad-villages";
+import { computeClinicalRisk } from "@/modules/health-pipeline/clinical-risk";
 import { getSupabaseClient } from "@/lib/supabase";
 import { normalizeUsername, suggestUsername } from "@/lib/username";
 
@@ -92,6 +94,10 @@ function toListItem(patientId: string): PatientListItem {
   const store = getStore();
   const patient = store.patients.find((p) => p.id === patientId)!;
   const profile = store.profiles.find((p) => p.id === patient.user_id);
+  const live = computeClinicalRisk(patient.id);
+  const village =
+    villageLabelFromAddress(patient.address) ||
+    villageLabelFromAddress(profile?.address ?? null);
   return {
     id: patient.id,
     user_id: patient.user_id,
@@ -103,9 +109,9 @@ function toListItem(patientId: string): PatientListItem {
     blood_group: patient.blood_group,
     status: patient.status,
     is_archived: patient.is_archived,
-    recovery_score:
-      store.recoveryScores.find((r) => r.patient_id === patient.id)?.score ?? null,
-    risk_level: store.risks.find((r) => r.patient_id === patient.id)?.level ?? null,
+    recovery_score: live.recovery_score,
+    risk_level: live.level,
+    village,
     abha_id_demo: patient.abha_id_demo,
     chronic_diseases: patient.chronic_diseases,
     created_at: patient.created_at,
@@ -119,9 +125,10 @@ export const doctorRepository = {
     const store = getStore();
     const today = todayKey();
     const patients = store.patients.filter((p) => ids.includes(p.id) && !p.is_archived);
-    const high = store.risks.filter(
-      (r) => ids.includes(r.patient_id) && (r.level === "high" || r.level === "critical"),
-    ).length;
+    const high = ids.filter((id) => {
+      const level = computeClinicalRisk(id).level;
+      return level === "high" || level === "critical";
+    }).length;
     const appts = store.appointments.filter(
       (a) =>
         a.doctor_id === doctor.id &&
@@ -167,7 +174,8 @@ export const doctorRepository = {
         (p) =>
           p.full_name.toLowerCase().includes(q) ||
           p.phone?.toLowerCase().includes(q) ||
-          p.email?.toLowerCase().includes(q),
+          p.email?.toLowerCase().includes(q) ||
+          (p.village || "").toLowerCase().includes(q),
       );
     }
     return rows.sort((a, b) => b.created_at.localeCompare(a.created_at));

@@ -31,7 +31,11 @@ export function RiskCard({
                 <p className="font-display text-3xl font-semibold text-primary">
                   {readmission.readmission_probability_percent.toFixed(0)}%
                 </p>
-                <Badge className="capitalize">{readmission.risk_category}</Badge>
+                <Badge className="capitalize">
+                  {readmission.risk_category === "medium"
+                    ? "moderate"
+                    : readmission.risk_category}
+                </Badge>
                 <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
                   {readmission.explanation.slice(0, 3).map((e) => (
                     <li key={e}>• {e}</li>

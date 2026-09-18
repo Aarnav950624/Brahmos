@@ -1,4 +1,5 @@
 import { getStore } from "@/data/store";
+import { computeClinicalRisk } from "@/modules/health-pipeline/clinical-risk";
 
 export type VisitBriefContext = {
   patient: {
@@ -121,8 +122,9 @@ export function buildVisitBriefContext(
   if (!patient) return null;
 
   const profile = store.profiles.find((p) => p.id === patient.user_id);
-  const risk = store.risks.find((r) => r.patient_id === patientId);
-  const recovery = store.recoveryScores.find((r) => r.patient_id === patientId);
+  const live = computeClinicalRisk(patientId);
+  const risk = { level: live.level };
+  const recovery = { score: live.recovery_score };
 
   const now = new Date();
   const completedAppts = store.appointments

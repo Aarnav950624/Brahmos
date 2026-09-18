@@ -1,5 +1,10 @@
 import { getStore, type RiskLevel } from "@/data/store";
-import { evaluateHealth } from "@/lib/health-engine";
+import {
+  evaluateHealth,
+  recoveryLevel,
+  type HealthIntelligenceBundle,
+  type RiskCategory,
+} from "@/lib/health-engine";
 import { buildObservationsForPatient } from "@/modules/prediction/adapters";
 
 export interface ClinicalRiskResult {
@@ -148,5 +153,35 @@ export function computeClinicalRisk(patientId: string): ClinicalRiskResult {
     recovery_score,
     drivers: uniqueDrivers,
     latest_vitals,
+  };
+}
+
+export function clinicalLevelToRiskCategory(level: RiskLevel): RiskCategory {
+  if (level === "moderate") return "medium";
+  return level;
+}
+
+/** Same live numbers the doctor list, Recovery page, and Active Panel share. */
+export function overlayClinicalOnHealth(
+  health: HealthIntelligenceBundle,
+  clinical: ClinicalRiskResult,
+): HealthIntelligenceBundle {
+  const recovery_score = clinical.recovery_score;
+  return {
+    ...health,
+    recovery: {
+      ...health.recovery,
+      recovery_score,
+      recovery_level: recoveryLevel(recovery_score),
+      summary: `Recovery Score is ${recovery_score}/100 (${recoveryLevel(recovery_score).replaceAll("_", " ")}). ${
+        clinical.drivers.slice(0, 3).join("; ") || health.recovery.summary
+      }`,
+    },
+    readmission: {
+      ...health.readmission,
+      readmission_probability_percent: clinical.score,
+      risk_category: clinicalLevelToRiskCategory(clinical.level),
+      explanation: clinical.drivers,
+    },
   };
 }

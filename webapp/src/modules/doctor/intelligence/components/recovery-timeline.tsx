@@ -11,13 +11,15 @@ import {
 
 import { identityRepository } from "@/modules/identity/repository";
 import { getStore } from "@/data/store";
+import { computeClinicalRisk } from "@/modules/health-pipeline/clinical-risk";
 
 export function RecoveryTimeline({ patientId }: { patientId: string }) {
   const timeline = identityRepository.getTimeline(patientId);
   const store = getStore();
   const carePlan = store.carePlans.find((c) => c.patient_id === patientId);
-  const risk = store.risks.find((r) => r.patient_id === patientId);
-  const recovery = store.recoveryScores.find((r) => r.patient_id === patientId);
+  const live = computeClinicalRisk(patientId);
+  const recovery = { score: live.recovery_score };
+  const risk = { level: live.level, score: live.score };
 
   const stages = [
     {

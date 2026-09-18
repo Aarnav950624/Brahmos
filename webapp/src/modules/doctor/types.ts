@@ -35,6 +35,7 @@ export interface PatientListItem {
   is_archived: boolean;
   recovery_score?: number | null;
   risk_level?: RiskLevel | null;
+  village?: string | null;
   abha_id_demo?: string | null;
   chronic_diseases?: string[] | null;
   created_at: string;

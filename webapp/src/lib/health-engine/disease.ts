@@ -24,10 +24,7 @@ export function computeDiseaseProgression(
   obs: PatientObservationBundle,
   focus?: Condition[],
 ): DiseaseProgressionResult {
-  const raw =
-    focus?.length
-      ? focus
-      : (obs.conditions?.length ? obs.conditions : ["diabetes", "hypertension"]);
+  const raw = focus?.length ? focus : (obs.conditions ?? []);
   const conditions = raw.filter(
     (c): c is Exclude<Condition, "other"> =>
       c === "diabetes" ||
@@ -35,11 +32,17 @@ export function computeDiseaseProgression(
       c === "heart_disease" ||
       c === "ckd",
   );
-  const list = conditions.length
-    ? conditions
-    : (["diabetes", "hypertension"] as const);
+  if (!conditions.length) {
+    return {
+      assessments: [],
+      overall_worsening_risk: "low",
+      summary:
+        "No diabetes, hypertension, heart disease, or CKD on file — progression scoring stays NA until those conditions are recorded.",
+      meta: meta("disease_progression", "condition_rules_v1"),
+    };
+  }
 
-  const assessments = list.map((c) => assess(c, obs));
+  const assessments = conditions.map((c) => assess(c, obs));
   const overall = worst(assessments.map((a) => a.risk));
 
   return {

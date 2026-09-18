@@ -141,6 +141,7 @@ export function PatientsPage() {
                     {patient.age ? `${patient.age} yrs · ` : ""}
                     {patient.sex || "—"} · {patient.phone || "No phone"} · Recovery{" "}
                     {patient.recovery_score ?? "—"}
+                    {patient.village ? ` · ${patient.village}` : ""}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {(patient.chronic_diseases || []).join(", ") || "No chronic diseases listed"}

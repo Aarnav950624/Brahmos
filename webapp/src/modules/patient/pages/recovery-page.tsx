@@ -59,8 +59,8 @@ export function RecoveryPage() {
         <div>
           <h1 className="font-display text-3xl font-semibold">Recovery</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Live score from your check-ins, adherence, and risk engine — not a
-            static card.
+            Live score from your check-ins, adherence, and the same rule engine
+            your doctor sees on the patient list — not a static card.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
