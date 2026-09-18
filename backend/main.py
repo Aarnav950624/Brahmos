@@ -8,7 +8,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-from app.api.v1 import ai, wallet, asha, doctor, pharmacy, lab, citizen, scheme, caremap, emergency, nudge
+from app.api.v1 import ai, wallet, asha, doctor, pharmacy, lab, citizen, scheme, caremap, emergency, nudge, panchayat
 
 app.include_router(ai.router, prefix="/api/v1/ai", tags=["AI"])
 app.include_router(wallet.router, prefix="/api/v1/health-wallet", tags=["Health Wallet"])
@@ -21,6 +21,7 @@ app.include_router(scheme.router, prefix="/api/v1", tags=["Scheme"])
 app.include_router(caremap.router, prefix="/api/v1/care-map", tags=["CareMap"])
 app.include_router(emergency.router, prefix="/api/v1/emergency", tags=["Emergency"])
 app.include_router(nudge.router, prefix="/api/v1/notifications", tags=["Nudge Engine"])
+app.include_router(panchayat.router, prefix="/api/v1/panchayat", tags=["Panchayat"])
 
 # Configure CORS for frontend access
 app.add_middleware(

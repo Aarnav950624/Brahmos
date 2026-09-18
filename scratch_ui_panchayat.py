@@ -1,10 +1,20 @@
-"use client";
+import os
+
+def write_file(path, content):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+base = "c:/Users/Dhairya Bhansali/OneDrive/Documents/CodeCraft/frontend/src"
+
+panchayat_page = """"use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ShieldAlert, Users, Activity, Syringe, Baby, MapPin, Sparkles, Navigation, AlertTriangle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function PanchayatDashboard() {
   const [data, setData] = useState<any>(null);
@@ -40,15 +50,16 @@ export default function PanchayatDashboard() {
         <div className="flex items-center gap-3 bg-white p-2 rounded-lg shadow-sm border border-slate-200">
           <MapPin className="h-5 w-5 text-blue-600" />
           <span className="font-bold text-slate-800 pr-2 border-r">{data.village}</span>
-          <select 
-            value={timeRange} 
-            onChange={(e) => setTimeRange(e.target.value)}
-            className="w-[140px] bg-transparent border-none text-slate-700 text-sm font-medium focus:ring-0 cursor-pointer outline-none"
-          >
-            <option value="7">Last 7 Days</option>
-            <option value="30">Last 30 Days</option>
-            <option value="90">Last 90 Days</option>
-          </select>
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className="w-[140px] border-none shadow-none focus:ring-0">
+              <SelectValue placeholder="Select Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">Last 7 Days</SelectItem>
+              <SelectItem value="30">Last 30 Days</SelectItem>
+              <SelectItem value="90">Last 90 Days</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -304,3 +315,7 @@ export default function PanchayatDashboard() {
     </div>
   );
 }
+"""
+
+write_file(f"{base}/app/(dashboard)/panchayat/page.tsx", panchayat_page)
+print("Created Panchayat Dashboard UI")
