@@ -148,6 +148,15 @@ export function HospitalMapPage() {
           <LocateFixed className="mr-1.5 h-4 w-4" />
           Use my location
         </Button>
+        {userPos ? (
+          <span className="text-xs text-muted-foreground">
+            Ranked from your location · {sites.length} places
+          </span>
+        ) : (
+          <span className="text-xs text-muted-foreground">
+            {sites.length} places in Ahmedabad
+          </span>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-3 text-[11px] font-medium text-muted-foreground">
