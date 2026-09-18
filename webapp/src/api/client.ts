@@ -47,7 +47,6 @@ export async function aiRequest<T>(
       Accept: "application/json",
       ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(env.exaApiKey ? { "X-Exa-Key": env.exaApiKey } : {}),
       ...headers,
     },
     body: body === undefined ? undefined : JSON.stringify(body),
