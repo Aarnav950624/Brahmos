@@ -111,54 +111,6 @@ export const WHY_ROWS = [
   },
 ];
 
-export const PRICING = [
-  {
-    id: "starter",
-    name: "Starter",
-    price: "Free",
-    period: "",
-    blurb: "Explore the platform with sample cohorts.",
-    featured: false,
-    features: [
-      "Doctor Intelligence Center",
-      "Patient check-ins",
-      "Recovery Score",
-      "Ahmedabad hospital map",
-    ],
-  },
-  {
-    id: "professional",
-    name: "Professional",
-    price: "₹4,999",
-    period: "/mo",
-    blurb: "For clinics ready for live continuity workflows.",
-    featured: true,
-    features: [
-      "Everything in Starter",
-      "Priority patient queue",
-      "Executive analytics",
-      "Caregiver visibility",
-      "Offline rural sync",
-      "Priority support",
-    ],
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    price: "Custom",
-    period: "",
-    blurb: "Hospital networks & government partnerships.",
-    featured: false,
-    features: [
-      "Everything in Professional",
-      "SSO & advanced security",
-      "Multi-hospital rollouts",
-      "Custom integrations",
-      "Dedicated success team",
-    ],
-  },
-];
-
 export const TESTIMONIALS = [
   {
     quote:
@@ -198,7 +150,7 @@ export const FAQS = [
   },
   {
     q: "Is PM-JAY supported?",
-    a: "HealNexus includes conversational PM-JAY guidance and an Ahmedabad hospital map highlighting empanelled centres for easy exploration.",
+    a: "HealNexus includes conversational PM-JAY guidance (demo / prototype — not a live government API) and an Ahmedabad hospital map highlighting empanelled centres.",
   },
   {
     q: "What is the Patient Passport?",
