@@ -31,19 +31,21 @@ export default function CitizenDashboard() {
         <h2 className="text-lg font-bold text-slate-800 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
-            { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700" },
-            { label: "Check Symptoms", icon: Activity, color: "bg-red-100 text-red-700" },
-            { label: "Book Doctor", icon: Stethoscope, color: "bg-purple-100 text-purple-700" },
-            { label: "Health Wallet", icon: Heart, color: "bg-pink-100 text-pink-700" },
-            { label: "My Medicines", icon: Pill, color: "bg-amber-100 text-amber-700" },
-            { label: "Find Care", icon: MapPin, color: "bg-emerald-100 text-emerald-700" },
+            { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700", href: "#" },
+            { label: "Check Symptoms", icon: Activity, color: "bg-red-100 text-red-700", href: "/citizen/symptom-checker" },
+            { label: "Book Doctor", icon: Stethoscope, color: "bg-purple-100 text-purple-700", href: "#" },
+            { label: "Health Wallet", icon: Heart, color: "bg-pink-100 text-pink-700", href: "#" },
+            { label: "My Medicines", icon: Pill, color: "bg-amber-100 text-amber-700", href: "#" },
+            { label: "Find Care", icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "#" },
           ].map((action, i) => (
-            <Button key={i} variant="outline" className="h-auto py-4 flex flex-col gap-2 items-center justify-center border-slate-200 hover:border-slate-300 bg-white">
-              <div className={`p-3 rounded-full ${action.color}`}>
-                <action.icon className="h-5 w-5" />
-              </div>
-              <span className="text-xs font-semibold whitespace-normal text-center">{action.label}</span>
-            </Button>
+            <a href={action.href} key={i}>
+              <Button variant="outline" className="h-full w-full py-4 flex flex-col gap-2 items-center justify-center border-slate-200 hover:border-slate-300 bg-white">
+                <div className={`p-3 rounded-full ${action.color}`}>
+                  <action.icon className="h-5 w-5" />
+                </div>
+                <span className="text-xs font-semibold whitespace-normal text-center">{action.label}</span>
+              </Button>
+            </a>
           ))}
         </div>
       </div>

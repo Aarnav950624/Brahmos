@@ -22,7 +22,7 @@ export function Sidebar() {
     case "CITIZEN":
       links = [
         { name: "Dashboard", href: "/citizen", icon: Home },
-        { name: "Ask ArogyaAI", href: "#", icon: SearchIcon },
+        { name: "Check Symptoms", href: "/citizen/symptom-checker", icon: SearchIcon },
         { name: "Health Wallet", href: "#", icon: Heart },
         { name: "Consultations", href: "#", icon: Stethoscope },
         { name: "Medicines", href: "#", icon: Pill },
