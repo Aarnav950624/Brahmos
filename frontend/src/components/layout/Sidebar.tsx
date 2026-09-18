@@ -24,6 +24,7 @@ export function Sidebar() {
         { name: "Dashboard", href: "/citizen", icon: Home },
         { name: "Check Symptoms", href: "/citizen/symptom-checker", icon: SearchIcon },
         { name: "Health Wallet", href: "/citizen/health-wallet", icon: Heart },
+        { name: "My Requests", href: "/citizen/requests", icon: Bell },
         { name: "Consultations", href: "#", icon: Stethoscope },
         { name: "Medicines", href: "#", icon: Pill },
         { name: "CareMap", href: "#", icon: MapPin },
@@ -53,9 +54,9 @@ export function Sidebar() {
     case "PHARMACY":
       links = [
         { name: "Dashboard", href: "/pharmacy", icon: Home },
-        { name: "Requests", href: "#", icon: Bell },
-        { name: "Orders", href: "#", icon: Package },
-        { name: "Inventory", href: "#", icon: Pill },
+        { name: "Pharmacy Requests", href: "/pharmacy/requests", icon: Bell },
+        { name: "Lab Requests", href: "/pharmacy/lab-requests", icon: FileText },
+        { name: "Inventory", href: "/pharmacy/inventory", icon: Pill },
         { name: "Deliveries", href: "#", icon: MapPin },
       ];
       break;

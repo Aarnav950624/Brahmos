@@ -47,9 +47,29 @@ async def save_consultation(request: ConsultationNoteRequest):
         message="Consultation notes saved successfully."
     )
 
+from app.schemas.pharmacy import PharmacyRequestCreate
+from app.api.v1.pharmacy import create_internal_pharmacy_request
+from app.schemas.lab import DiagnosticRequestCreate
+from app.api.v1.lab import create_internal_lab_request
+
 @router.post("/prescriptions")
 async def save_prescription(request: PrescriptionRequest):
-    return {"status": "success", "message": "Prescription created."}
+    # Generate pharmacy request automatically from prescription
+    patient_name = "Asha Devi" if request.patient_id == "mem-002" else "Ramesh Patel"
+    pharmacy_data = PharmacyRequestCreate(
+        patient_id=request.patient_id,
+        patient_name=patient_name,
+        prescription_id=f"rx-{uuid.uuid4().hex[:6]}",
+        doctor_name="Dr. Smith",
+        medicines=request.medicines
+    )
+    create_internal_pharmacy_request(pharmacy_data)
+    return {"status": "success", "message": "Prescription and Pharmacy Request created."}
+
+@router.post("/diagnostic-requests")
+async def save_diagnostic_request(request: DiagnosticRequestCreate):
+    create_internal_lab_request(request)
+    return {"status": "success", "message": "Diagnostic Request created."}
 
 @router.post("/followups")
 async def save_followup(request: FollowUpRequest):

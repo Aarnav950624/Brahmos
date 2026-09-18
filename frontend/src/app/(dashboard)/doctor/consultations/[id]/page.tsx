@@ -54,6 +54,10 @@ export default function ConsultationWorkspace({ params }: { params: { id: string
   const [followUpDate, setFollowUpDate] = useState("");
   const [followUpReason, setFollowUpReason] = useState("");
 
+  // Diagnostic Test
+  const [testName, setTestName] = useState("");
+  const [diagnosticNotes, setDiagnosticNotes] = useState("");
+
   const patientName = PATIENT_NAMES[params.id] ?? "Unknown Patient";
   const patientAge = PATIENT_AGES[params.id] ?? 0;
   const referralReason = PATIENT_REASONS[params.id] ?? "";
@@ -106,6 +110,21 @@ export default function ConsultationWorkspace({ params }: { params: { id: string
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ patient_id: params.id, consultation_id: "cons-demo", follow_up_required: true, follow_up_date: followUpDate, reason: followUpReason }),
+        });
+      }
+
+      if (testName.trim()) {
+        await fetch("http://localhost:8000/api/v1/doctor/diagnostic-requests", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            patient_id: params.id,
+            patient_name: patientName,
+            doctor_name: "Dr. Smith",
+            consultation_id: "cons-demo",
+            test_name: testName,
+            notes: diagnosticNotes
+          }),
         });
       }
     } catch (e) {
@@ -329,6 +348,25 @@ export default function ConsultationWorkspace({ params }: { params: { id: string
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Diagnostic Request */}
+          <Card className="bg-white border-slate-200">
+            <CardHeader>
+              <CardTitle className="text-slate-900">Diagnostic Request</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1" htmlFor="test-name">Test Name</label>
+                  <Input id="test-name" value={testName} onChange={e => setTestName(e.target.value)} placeholder="e.g. CBC, Lipid Profile" className="bg-white" />
+                </div>
+                <div>
+                  <label className="block text-xs text-slate-500 mb-1" htmlFor="test-notes">Notes for Lab</label>
+                  <Input id="test-notes" value={diagnosticNotes} onChange={e => setDiagnosticNotes(e.target.value)} placeholder="e.g. Fasting required" className="bg-white" />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
