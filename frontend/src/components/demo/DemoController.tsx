@@ -56,10 +56,10 @@ export function DemoController() {
 
           <div className="flex items-center justify-between mt-4">
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={prevStep} disabled={currentStepIndex === 0}>
+              <Button variant="outline" size="sm" onClick={prevStep} disabled={currentStepIndex === 0} aria-label="Previous Demo Step">
                 <ChevronLeft className="h-4 w-4 mr-1" /> Prev
               </Button>
-              <Button variant="default" size="sm" onClick={nextStep} disabled={currentStepIndex === DEMO_STEPS.length - 1}>
+              <Button variant="default" size="sm" onClick={nextStep} disabled={currentStepIndex === DEMO_STEPS.length - 1} aria-label="Next Demo Step">
                 Next <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </div>
