@@ -124,3 +124,82 @@ async def analyze_report(request: ReportAnalysisRequest) -> ReportAnalysisRespon
         disclaimer="AI interpretation is for informational purposes only. Always consult a doctor for a definitive diagnosis."
     )
 
+from app.schemas.ai import RiskIndicatorRequest, RiskIndicatorResponse, RiskIndicatorOutput
+
+def calculate_risk_indicators(request: RiskIndicatorRequest) -> RiskIndicatorResponse:
+    """
+    Deterministic/rule-based baseline risk engine for ASHA workers.
+    """
+    indicators = []
+    overall_priority = "LOW"
+    
+    data = request.visit_data
+    
+    # 1. Emergency Checks
+    is_emergency = data.get("severe_breathing_difficulty") or data.get("unconsciousness") or data.get("severe_chest_pain")
+    if is_emergency:
+        indicators.append(
+            RiskIndicatorOutput(
+                title="Emergency symptoms reported",
+                priority="EMERGENCY",
+                reason="Red-flag emergency symptoms were recorded during the visit.",
+                evidence=["Patient is experiencing severe symptoms that require immediate attention."],
+                suggested_action="Seek immediate professional/emergency assistance."
+            )
+        )
+        overall_priority = "EMERGENCY"
+    
+    # 2. Pregnancy Checks
+    if data.get("is_pregnant"):
+        if data.get("missed_anc") or data.get("pregnancy_warning_signs"):
+            indicators.append(
+                RiskIndicatorOutput(
+                    title="Pregnancy follow-up requires attention",
+                    priority="HIGH",
+                    reason="High-risk pregnancy flag combined with a missed scheduled follow-up or warning signs.",
+                    evidence=["Pregnancy status: Active", "Missed ANC or warning signs present"],
+                    suggested_action="Arrange timely professional review."
+                )
+            )
+            if overall_priority not in ["EMERGENCY"]:
+                overall_priority = "HIGH"
+
+    # 3. Respiratory Checks
+    if data.get("breathing_difficulty") or (data.get("fever") and data.get("cough")):
+        indicators.append(
+            RiskIndicatorOutput(
+                title="Respiratory symptoms require attention",
+                priority="MODERATE" if not data.get("breathing_difficulty") else "HIGH",
+                reason="Breathing difficulty or persistent fever/cough reported.",
+                evidence=["Fever", "Cough", "Breathing issues"],
+                suggested_action="Escalate according to local clinical protocol."
+            )
+        )
+        if overall_priority not in ["EMERGENCY", "HIGH"]:
+            overall_priority = "MODERATE"
+            
+    # 4. Chronic Checks
+    if data.get("high_bp") or data.get("missed_medication"):
+        indicators.append(
+            RiskIndicatorOutput(
+                title="Chronic-condition monitoring requires attention",
+                priority="MODERATE",
+                reason="Recent measurements or follow-up information indicate that additional review may be appropriate.",
+                evidence=["Abnormal BP/glucose or missed medication"],
+                suggested_action="Schedule follow-up or consult doctor for medication review."
+            )
+        )
+        if overall_priority not in ["EMERGENCY", "HIGH"]:
+            overall_priority = "MODERATE"
+            
+    if not indicators:
+        overall_priority = "LOW"
+        
+    return RiskIndicatorResponse(
+        overall_priority=overall_priority,
+        indicators=indicators,
+        questions_for_professional=["Are there any modifications to the current care plan?"] if indicators else [],
+        disclaimer="This is general AI guidance and not a medical diagnosis."
+    )
+
+

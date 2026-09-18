@@ -34,7 +34,7 @@ export function Sidebar() {
     case "ASHA_WORKER":
       links = [
         { name: "Dashboard", href: "/asha", icon: Home },
-        { name: "Households", href: "#", icon: Users },
+        { name: "Households", href: "/asha/households", icon: Users },
         { name: "Visits", href: "#", icon: Activity },
         { name: "Risk Alerts", href: "#", icon: FileWarning },
         { name: "Follow-ups", href: "#", icon: ClipboardList },

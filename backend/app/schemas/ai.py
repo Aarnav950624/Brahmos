@@ -52,3 +52,21 @@ class ReportAnalysisResponse(BaseModel):
         default="AI interpretation is for informational purposes only. Always consult a doctor for a definitive diagnosis."
     )
 
+class RiskIndicatorRequest(BaseModel):
+    member_id: str
+    visit_data: dict
+
+class RiskIndicatorOutput(BaseModel):
+    title: str
+    priority: str
+    reason: str
+    evidence: List[str]
+    suggested_action: str
+
+class RiskIndicatorResponse(BaseModel):
+    overall_priority: str
+    indicators: List[RiskIndicatorOutput]
+    questions_for_professional: List[str] = []
+    disclaimer: str = "This is general AI guidance and not a medical diagnosis."
+
+

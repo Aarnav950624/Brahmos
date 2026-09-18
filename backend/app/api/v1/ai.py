@@ -27,3 +27,16 @@ async def get_report_analysis(request: ReportAnalysisRequest):
         print(f"Error in report_analysis: {e}")
         raise HTTPException(status_code=500, detail="Failed to analyze report")
 
+from app.schemas.ai import RiskIndicatorRequest, RiskIndicatorResponse
+from app.services.ai_service import calculate_risk_indicators
+
+@router.post("/risk-indicators", response_model=RiskIndicatorResponse)
+async def get_risk_indicators(request: RiskIndicatorRequest):
+    try:
+        response = calculate_risk_indicators(request)
+        return response
+    except Exception as e:
+        print(f"Error in risk indicators: {e}")
+        raise HTTPException(status_code=500, detail="Failed to calculate risk indicators")
+
+
