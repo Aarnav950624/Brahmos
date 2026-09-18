@@ -1,0 +1,330 @@
+import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ClipboardList,
+  FileUp,
+  FlaskConical,
+} from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/auth-context";
+import {
+  useInvestigationMutations,
+  usePatientInvestigations,
+} from "@/modules/investigations/hooks";
+import type { InvestigationView } from "@/modules/investigations/types";
+
+function statusVariant(status: InvestigationView["status"]) {
+  if (status === "overdue") return "destructive" as const;
+  if (status === "completed") return "secondary" as const;
+  if (status === "review_required") return "warning" as const;
+  return "outline" as const;
+}
+
+export function PendingInvestigationsPanel({
+  patientId,
+  title = "Pending Investigations",
+  mode = "patient",
+  compact = false,
+}: {
+  patientId: string;
+  title?: string;
+  mode?: "patient" | "readonly" | "doctor";
+  compact?: boolean;
+}) {
+  const { user } = useAuth();
+  const list = usePatientInvestigations(patientId);
+  const { markCompleted, uploadReport, review } = useInvestigationMutations();
+  const [openId, setOpenId] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploadTarget, setUploadTarget] = useState<string | null>(null);
+
+  const items = (list.data || []).filter((i) => i.status !== "cancelled");
+  const pending = items.filter((i) =>
+    ["pending", "scheduled", "overdue", "review_required"].includes(i.status),
+  );
+  const attention = items.filter(
+    (i) => i.status === "overdue" || i.status === "review_required",
+  );
+
+  if (compact) {
+    return (
+      <section className="rounded-xl border border-border bg-card p-4 shadow-soft">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Needs Attention
+          </h2>
+          {attention.length ? (
+            <Badge variant="destructive">{attention.length}</Badge>
+          ) : null}
+        </div>
+
+        {list.isLoading ? (
+          <p className="mt-3 text-sm text-muted-foreground">Loading…</p>
+        ) : attention.length === 0 ? (
+          <p className="mt-3 flex items-center gap-2 text-sm text-secondary">
+            <CheckCircle2 className="h-4 w-4" aria-hidden />
+            You&apos;re all caught up.
+          </p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border/70">
+            {attention.map((item) => (
+              <li
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-2 py-2.5"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{item.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {item.status === "overdue"
+                      ? item.days_until_due < 0
+                        ? `${Math.abs(item.days_until_due)} days overdue`
+                        : "Overdue"
+                      : item.status === "review_required"
+                        ? "Doctor review required"
+                        : "Due today"}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8"
+                    onClick={() =>
+                      setOpenId((cur) => (cur === item.id ? null : item.id))
+                    }
+                  >
+                    View details
+                  </Button>
+                  {mode === "patient" ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8"
+                      disabled={uploadReport.isPending}
+                      onClick={() => {
+                        setUploadTarget(item.id);
+                        fileRef.current?.click();
+                      }}
+                    >
+                      <FileUp className="mr-1 h-3.5 w-3.5" />
+                      Upload report
+                    </Button>
+                  ) : null}
+                </div>
+                {openId === item.id ? (
+                  <p className="w-full text-xs text-muted-foreground">
+                    {item.purpose || item.notes || "Prescribed investigation."}{" "}
+                    Due {item.due_date}.
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*,application/pdf"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file && uploadTarget) {
+              uploadReport.mutate({ id: uploadTarget, file });
+            }
+            e.target.value = "";
+            setUploadTarget(null);
+          }}
+        />
+      </section>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between gap-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <FlaskConical className="h-4 w-4 text-sky-700" />
+          {title}
+        </CardTitle>
+        <Badge variant="outline">{pending.length} open</Badge>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {list.isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading investigations…</p>
+        ) : items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No investigations prescribed yet.
+          </p>
+        ) : (
+          items.map((item, index) => (
+            <motion.article
+              key={item.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.04 }}
+              className="rounded-2xl border border-border/80 bg-background/80 p-4"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="font-semibold">{item.name}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Due {item.due_date}
+                    {item.days_until_due < 0
+                      ? ` · ${Math.abs(item.days_until_due)}d overdue`
+                      : item.days_until_due === 0
+                        ? " · due today"
+                        : ` · in ${item.days_until_due}d`}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant={statusVariant(item.status)} className="capitalize">
+                    {item.status.replaceAll("_", " ")}
+                  </Badge>
+                  <Badge variant="outline" className="capitalize">
+                    {item.priority}
+                  </Badge>
+                </div>
+              </div>
+
+              {item.notes ? (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Doctor notes: </span>
+                  {item.notes}
+                </p>
+              ) : null}
+
+              {openId === item.id ? (
+                <div className="mt-3 space-y-2 rounded-xl bg-muted/40 p-3 text-sm text-muted-foreground">
+                  {item.purpose ? (
+                    <p>
+                      <strong>Purpose:</strong> {item.purpose}
+                    </p>
+                  ) : null}
+                  {item.preparation ? (
+                    <p>
+                      <strong>Preparation:</strong> {item.preparation}
+                    </p>
+                  ) : null}
+                  {item.attachment_url ? (
+                    <div>
+                      <p className="mb-1 font-medium text-foreground">
+                        Uploaded report
+                      </p>
+                      <button
+                        type="button"
+                        className="text-sm text-primary underline"
+                        onClick={() => {
+                          void import("@/lib/open-attachment").then(
+                            ({ openAttachment }) =>
+                              openAttachment(
+                                item.attachment_url!,
+                                item.attachment_name || "report.pdf",
+                              ),
+                          );
+                        }}
+                      >
+                        {item.attachment_name || "Open report"}
+                      </button>
+                    </div>
+                  ) : null}
+                  <p className="text-xs">
+                    HealNexus does not interpret investigation results. Your
+                    doctor reviews them.
+                  </p>
+                </div>
+              ) : null}
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() =>
+                    setOpenId((cur) => (cur === item.id ? null : item.id))
+                  }
+                >
+                  <ClipboardList className="mr-1 h-3.5 w-3.5" />
+                  View details
+                </Button>
+
+                {mode === "patient" &&
+                (item.status === "pending" ||
+                  item.status === "scheduled" ||
+                  item.status === "overdue") ? (
+                  <>
+                    <Button
+                      size="sm"
+                      disabled={markCompleted.isPending}
+                      onClick={() => markCompleted.mutate(item.id)}
+                    >
+                      <CheckCircle2 className="mr-1 h-3.5 w-3.5" />
+                      Mark completed
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={uploadReport.isPending}
+                      onClick={() => {
+                        setUploadTarget(item.id);
+                        fileRef.current?.click();
+                      }}
+                    >
+                      <FileUp className="mr-1 h-3.5 w-3.5" />
+                      Upload report
+                    </Button>
+                  </>
+                ) : null}
+
+                {mode === "doctor" &&
+                (item.status === "review_required" ||
+                  item.status === "overdue" ||
+                  item.status === "pending") &&
+                user?.id ? (
+                  <Button
+                    size="sm"
+                    disabled={review.isPending}
+                    onClick={() =>
+                      review.mutate({
+                        id: item.id,
+                        doctorUserId: user.id,
+                        decision: "completed",
+                      })
+                    }
+                  >
+                    Mark reviewed complete
+                  </Button>
+                ) : null}
+
+                {item.status === "overdue" ? (
+                  <span className="inline-flex items-center gap-1 text-xs text-destructive">
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                    Overdue — complete soon
+                  </span>
+                ) : null}
+              </div>
+            </motion.article>
+          ))
+        )}
+
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*,application/pdf"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file && uploadTarget) {
+              uploadReport.mutate({ id: uploadTarget, file });
+            }
+            e.target.value = "";
+            setUploadTarget(null);
+          }}
+        />
+      </CardContent>
+    </Card>
+  );
+}

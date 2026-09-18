@@ -1,0 +1,351 @@
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Activity,
+  Bell,
+  Bot,
+  CalendarDays,
+  BookOpen,
+  ChartColumn,
+  ChevronsLeft,
+  ClipboardList,
+  FlaskConical,
+  HeartHandshake,
+  HeartPulse,
+  LayoutDashboard,
+  LogOut,
+  MapPinned,
+  Pill,
+  Settings,
+  ShieldAlert,
+  ShieldCheck,
+  Sparkles,
+  Stethoscope,
+  UserRound,
+  Users,
+  WifiOff,
+  X,
+} from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import { HealNexusLogo, HealNexusMark } from "@/components/brand/logo";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth-context";
+import { useShell } from "@/contexts/shell-context";
+import {
+  GROUP_LABEL_KEYS,
+  NAV_LABEL_KEYS,
+} from "@/i18n/dictionaries";
+import { useAppLocale } from "@/i18n/locale-context";
+import { cn } from "@/lib/utils";
+import type { UserRole } from "@/types";
+
+type NavItem = {
+  label: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+};
+
+type NavGroup = {
+  id: string;
+  label: string;
+  items: NavItem[];
+};
+
+const NAV_GROUPS: Record<UserRole, NavGroup[]> = {
+  admin: [
+    {
+      id: "ops",
+      label: "Operations",
+      items: [
+        { label: "Admin", href: "/admin", icon: Settings },
+      ],
+    },
+  ],
+  doctor: [
+    {
+      id: "command",
+      label: "Command",
+      items: [
+        { label: "Home", href: "/doctor", icon: LayoutDashboard },
+        { label: "Escalation", href: "/doctor/escalations", icon: ShieldAlert },
+        { label: "Patients", href: "/doctor/patients", icon: Users },
+        { label: "Appointments", href: "/doctor/appointments", icon: CalendarDays },
+        { label: "Reports", href: "/doctor/reports", icon: ClipboardList },
+        {
+          label: "Analytics",
+          href: "/doctor/analytics",
+          icon: ChartColumn,
+        },
+      ],
+    },
+  ],
+  patient: [
+    {
+      id: "care",
+      label: "Care",
+      items: [
+        { label: "Today", href: "/patient", icon: HeartPulse },
+        { label: "Care Plan", href: "/patient/care-plan", icon: Sparkles },
+        { label: "Check-in", href: "/patient/check-in", icon: Activity },
+        { label: "Medicines", href: "/patient/medicines", icon: Pill },
+        {
+          label: "Reports",
+          href: "/patient/investigations",
+          icon: ClipboardList,
+        },
+      ],
+    },
+    {
+      id: "planning",
+      label: "Planning",
+      items: [
+        {
+          label: "Appointments",
+          href: "/patient/appointments",
+          icon: CalendarDays,
+        },
+        { label: "Recovery", href: "/patient/recovery-score", icon: ChartColumn },
+      ],
+    },
+    {
+      id: "ai",
+      label: "AI & Support",
+      items: [
+        { label: "AI Checkup", href: "/patient/ai-checkup", icon: FlaskConical },
+        { label: "Talk to HealNexus", href: "/patient/ai-assistant", icon: Bot },
+      ],
+    },
+    {
+      id: "health",
+      label: "Health",
+      items: [
+        { label: "Passport", href: "/patient/passport", icon: Stethoscope },
+        { label: "Get help", href: "/maps", icon: MapPinned },
+        {
+          label: "Emergency",
+          href: "/patient/profile#emergency",
+          icon: ShieldAlert,
+        },
+        {
+          label: "Benefits",
+          href: "/government/benefits",
+          icon: ShieldCheck,
+        },
+        {
+          label: "Caregivers",
+          href: "/patient/profile#caregivers",
+          icon: HeartHandshake,
+        },
+        { label: "Profile", href: "/patient/profile", icon: UserRound },
+        { label: "Settings", href: "/patient/settings", icon: Settings },
+      ],
+    },
+  ],
+  caregiver: [
+    {
+      id: "care",
+      label: "Family Care",
+      items: [
+        { label: "Dashboard", href: "/caregiver", icon: LayoutDashboard },
+        { label: "Family Members", href: "/caregiver/family", icon: Users },
+        { label: "Today's Care", href: "/caregiver/today", icon: HeartPulse },
+        { label: "Medicines", href: "/caregiver/medicines", icon: Pill },
+        { label: "Health Trends", href: "/caregiver/trends", icon: ChartColumn },
+        {
+          label: "Appointments",
+          href: "/caregiver/appointments",
+          icon: CalendarDays,
+        },
+        { label: "Education", href: "/caregiver/education", icon: BookOpen },
+      ],
+    },
+    {
+      id: "safety",
+      label: "Safety",
+      items: [
+        { label: "Passport", href: "/caregiver/passport", icon: Stethoscope },
+        { label: "Hospitals", href: "/caregiver/hospitals", icon: MapPinned },
+        { label: "Emergency", href: "/caregiver/emergency", icon: ShieldAlert },
+        { label: "Alerts", href: "/caregiver/alerts", icon: Bell },
+        { label: "Settings", href: "/caregiver/settings", icon: Settings },
+      ],
+    },
+  ],
+  health_worker: [
+    {
+      id: "field",
+      label: "Field",
+      items: [
+        { label: "Home", href: "/rural", icon: LayoutDashboard },
+        { label: "Field work", href: "/rural/screening", icon: HeartPulse },
+        { label: "Camps & map", href: "/rural/patients", icon: MapPinned },
+        { label: "Sync", href: "/rural/sync", icon: WifiOff },
+        { label: "Education", href: "/rural/education", icon: BookOpen },
+        { label: "Alerts", href: "/rural/notifications", icon: Bell },
+      ],
+    },
+  ],
+};
+
+export function Sidebar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { t } = useAppLocale();
+  const { sidebarCollapsed, mobileOpen, setMobileOpen, toggleCollapsed } = useShell();
+  const role = user?.role ?? "patient";
+  const groups = NAV_GROUPS[role];
+  const collapsed = sidebarCollapsed;
+
+  const handleLogout = async () => {
+    setMobileOpen(false);
+    await logout();
+    navigate("/login", { replace: true });
+  };
+
+  const labelFor = (label: string) => {
+    const key = NAV_LABEL_KEYS[label];
+    return key ? t(key) : label;
+  };
+  const groupFor = (label: string) => {
+    const key = GROUP_LABEL_KEYS[label];
+    return key ? t(key) : label;
+  };
+
+  return (
+    <>
+      <AnimatePresence>
+        {mobileOpen ? (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1090] bg-foreground/35 backdrop-blur-[2px] md:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden
+          />
+        ) : null}
+      </AnimatePresence>
+
+      <aside
+        className={cn(
+          "relative fixed inset-y-0 left-0 z-[1100] flex h-dvh max-h-dvh w-[16.5rem] shrink-0 flex-col overflow-visible border-r border-sidebar-border bg-sidebar/95 text-sidebar-foreground shadow-soft backdrop-blur-xl transition-[width,transform] duration-300 ease-out md:static md:z-auto md:translate-x-0",
+          collapsed ? "md:w-[4.25rem]" : "md:w-[13.5rem]",
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+        )}
+        aria-label="Main navigation"
+      >
+        <div
+          className={cn(
+            "flex h-12 items-center border-b border-sidebar-border px-2.5",
+            collapsed ? "md:justify-center" : "justify-between",
+          )}
+        >
+          <div className={cn(collapsed && "md:hidden")}>
+            <HealNexusLogo className="h-8 max-w-[138px]" />
+          </div>
+          <div className={cn("hidden", collapsed && "md:block")}>
+            <HealNexusMark size={28} />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close navigation"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <nav className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain px-2 py-2">
+          {groups.map((group) => (
+            <div key={group.id}>
+              <p
+                className={cn(
+                  "mb-0.5 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground",
+                  collapsed && "md:sr-only",
+                )}
+              >
+                {groupFor(group.label)}
+              </p>
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <NavLink
+                    key={item.href}
+                    to={item.href}
+                    end={item.href.split("/").length <= 2}
+                    title={labelFor(item.label)}
+                    onClick={() => setMobileOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        "group flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium transition-colors duration-150",
+                        collapsed && "md:justify-center md:px-1.5",
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground",
+                      )
+                    }
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" aria-hidden />
+                    <span
+                      className={cn(
+                        "truncate",
+                        collapsed && "md:sr-only",
+                      )}
+                    >
+                      {labelFor(item.label)}
+                    </span>
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        <div className="shrink-0 space-y-1.5 border-t border-sidebar-border p-2">
+          <p
+            className={cn(
+              "px-2.5 py-1 text-[10px] leading-snug text-muted-foreground",
+              collapsed && "md:hidden",
+            )}
+          >
+            {t("ai_disclaimer")}
+          </p>
+          {user ? (
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start gap-2 text-[#E11D48] hover:bg-rose-50 hover:text-[#E11D48]",
+                collapsed && "md:justify-center md:px-0",
+              )}
+              onClick={() => void handleLogout()}
+              aria-label={t("sign_out")}
+            >
+              <LogOut className="h-4 w-4" />
+              <span className={cn(collapsed && "md:sr-only")}>
+                {t("sign_out")}
+              </span>
+            </Button>
+          ) : null}
+        </div>
+
+        <button
+          type="button"
+          className="absolute -right-3 top-[2.65rem] z-20 hidden h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition hover:border-primary/40 hover:text-foreground md:flex"
+          onClick={toggleCollapsed}
+          aria-label={t("toggle_sidebar")}
+          aria-pressed={collapsed}
+        >
+          <ChevronsLeft
+            className={cn(
+              "h-3.5 w-3.5 transition-transform duration-200",
+              collapsed && "rotate-180",
+            )}
+            strokeWidth={2.4}
+          />
+        </button>
+      </aside>
+    </>
+  );
+}
