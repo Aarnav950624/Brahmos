@@ -1,330 +1,339 @@
+<div align="center">
+
 # HealNexus
 
-**AI-powered continuity of care after discharge** — doctors stay in control; patients, caregivers, and rural health workers keep the same recovery thread.
+**Healthcare that stays with you — after discharge.**
 
-> Clinical safety: HealNexus **never diagnoses, never prescribes, and never changes a doctor’s orders**. AI drafts and education are assistive. Licensed clinicians approve care plans.
+AI-powered continuity of care for patients, families, doctors, and rural health workers.
 
-This repository is a **working MVP**, not a slide-only mockup. Core flows run in the browser with a local demo store. Optional Python AI and Supabase are documented below.
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React_19-087EA4?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 
----
+[Quick start](#quick-start) · [Demo logins](#five-minute-demo) · [Architecture](#system-architecture) · [Deploy](#deploy) · [Safety](#clinical-safety)
 
-## 1. Problem statement
-
-Hospitals lose visibility after discharge. Patients miss medicines, vitals drift, investigations slip, and rural families cannot always reach the same OPD. Doctors get static labels, not a live picture. Caregivers and ASHA / ANM workers work from paper or memory.
-
-India-specific gaps this MVP targets (Ahmedabad / Gujarat demo):
-
-- Post-discharge follow-up for diabetes, hypertension, COPD, and surgery recovery
-- Language (English / Hindi / Gujarati) and village PHC → CHC → district hospital paths
-- Offline-friendly health identity when the network drops
-- Assistive AI that educates and organizes — without impersonating a doctor
+</div>
 
 ---
 
-## 2. Proposed solution
+## Clinical safety
 
-HealNexus is a **role-based web app** plus an optional **AI microservice**:
+> HealNexus **never diagnoses, never prescribes, and never changes a doctor’s orders.**  
+> AI drafts and education are assistive. **AI assists. Clinicians decide.**
 
-| Layer | What it does in this MVP |
+This repo is a **working MVP** — not a slide deck. Role portals, live recovery/risk scores, village caseload, maps, and passport run in the browser with **no API keys**. Optional FastAPI + Exa/OpenRouter unlock grounded chat.
+
+---
+
+## Table of contents
+
+1. [Problem](#problem)
+2. [Solution](#solution)
+3. [Features](#features)
+4. [Pricing model](#pricing-model)
+5. [Tech stack](#technology-stack)
+6. [Architecture](#system-architecture)
+7. [APIs](#apis)
+8. [Database](#database)
+9. [Setup & run](#quick-start)
+10. [Deploy](#deploy)
+11. [Secrets](#secrets--credentials)
+12. [AI disclosure](#ai-tools-disclosure)
+13. [Originality](#originality)
+
+---
+
+## Problem
+
+Hospitals lose the patient at the gate. After discharge, medicines are missed, vitals drift, labs go overdue, and rural families cannot always reach the same OPD. Doctors see **static labels**. Caregivers and ASHA / ANM workers work from paper.
+
+**India-shaped gaps this MVP targets** (Ahmedabad / Gujarat demo):
+
+| Gap | What breaks |
 | --- | --- |
-| `webapp/` | React 19 + Vite + TypeScript SPA: Patient, Doctor, Caregiver, Health Worker, Admin |
-| Local store | `localStorage` demo database (seeded Ahmedabad caseload). **This is enough to run and judge the prototype.** |
-| Rule engines | Recovery score, readmission risk, disease progression, alerts — computed in the client from live check-ins |
-| `ai-service/` | FastAPI: Care Companion drafts, visit brief, health assistant (Exa + OpenRouter), medicine OCR assist |
-| `supabase/` | Optional Postgres schema + RLS if you wire Auth later (not required to demo) |
-
-Doctors, patients, and field workers see **the same live scores** when check-ins, missed doses, overdue labs, or alerts change.
+| Post-discharge follow-up | Diabetes, hypertension, COPD, surgery recovery |
+| Language | English, Hindi, Gujarati in the same product |
+| Rural path | Village PHC → CHC → district hospital |
+| Offline | Health identity when the network drops |
+| Trust | Assistive AI that **does not** impersonate a doctor |
 
 ---
 
-## 3. Features (demonstrable in the prototype)
+## Solution
 
-Sign in with **live role buttons** on `/login` (or User ID + `demo123`).
+One continuity thread for **patient · family · doctor · health worker**.
 
-| Feature | Where to click | Original vs third-party |
+| Layer | Role in this MVP |
+| --- | --- |
+| **`webapp/`** | React 19 + Vite + TypeScript — five roles, marketing site, `/pricing` |
+| **Local store** | Browser `localStorage` seed (Ahmedabad + villages). **Enough to judge the prototype.** |
+| **Rule engines** | Recovery score, readmission risk, disease progression, alerts from live check-ins |
+| **`ai-service/`** | Optional FastAPI — Care Companion, visit brief, health assistant, medicine extract |
+| **`supabase/`** | Optional Postgres + RLS — **not required** to demo |
+
+When a check-in, missed dose, or overdue lab changes, **the doctor list and the patient Recovery page show the same numbers.**
+
+```mermaid
+flowchart LR
+  subgraph People
+    P[Patient]
+    D[Doctor]
+    C[Caregiver]
+    H[Health worker]
+  end
+  subgraph HealNexus
+    W[Web app]
+    S[Local store + rules]
+    A[Optional AI service]
+  end
+  P --> W
+  D --> W
+  C --> W
+  H --> W
+  W --> S
+  W -.-> A
+```
+
+---
+
+## Features
+
+Sign in on `/login` with **live role buttons**, or User ID + `demo123`.
+
+| You can try | Where | Built by |
 | --- | --- | --- |
-| Doctor caseload + live risk / recovery | Doctor → Patients / Home Active Panel | Original rule engine + UI |
-| Patient Today + Recovery | Patient → Today / Recovery | Original |
-| Check-in, medicines, care plan | Patient → Check-in / Medicines / Care Plan | Original |
-| AI Care Companion (chat / education) | Patient → Talk to HealNexus | Original orchestration; optional Exa + OpenRouter |
-| Doctor Visit Brief | Doctor patient record | Original context pack + optional LLM |
-| Medicine camera / scan assist | Patient → Scan Medicine | Original UI; optional AI extract |
-| Nearest care (PHC, CHC, shop, lab) | Patient → Get help | Original Ahmedabad/village catalogue; **Leaflet + OpenStreetMap** for map tiles |
+| Live risk + recovery caseload | Doctor → Patients / Active Panel | Original rules + UI |
+| Today dashboard + Recovery | Patient → Today / Recovery | Original |
+| Check-in, medicines, care plan | Patient modules | Original |
+| Talk to HealNexus | Patient → companion | Original orchestration; optional Exa + OpenRouter |
+| AI Doctor Visit Brief | Doctor patient record | Original context; optional LLM |
+| Medicine camera scanner | Patient → Scan | Original UI; optional extract |
+| Nearest care (PHC, shop, lab) | Patient → Get help | Original catalogue + **Leaflet / OSM** |
 | Offline Health Card / Passport QR | Patient → Passport | Original |
-| Caregiver alerts | Priya · Caregiver | Original |
-| Health worker home visits | Kavita · Health Worker | Original village seed |
-| EN / HI / GU | Language switcher | Original dictionaries (not i18next) |
-| Admin | Admin role | Original demo admin |
+| Family / caregiver alerts | Priya · Caregiver | Original |
+| Village home visits | Kavita · Health Worker | Original seed |
+| EN / HI / GU | Language switcher | Original dictionaries |
+| Pricing (B2C + B2B + sponsored) | `/pricing` | Original marketing page |
 
-**Without API keys:** all role portals, scores, maps (OSM), passport, check-ins, and village data work.
-
-**With `ai-service` + keys:** grounded health assistant and LLM drafts. Without keys, those routes return a clear “not configured” / local fallback — the rest of the MVP still runs.
+**No keys:** portals, scores, OSM maps, passport, check-ins, villages.  
+**With AI service:** grounded assistant and LLM drafts. Without keys, those calls fail closed — the rest still runs.
 
 ---
 
-## 4. Technology stack
+## Pricing model
 
-### Original work (this team)
+Presentation only (`webapp/src/modules/marketing/pricing-config.ts`) — **not billed**.
 
-- Domain modules: patient, doctor, caregiver, rural/health worker, identity, health passport
-- Local HealNexus store, seed (Ahmedabad + village caseload)
-- In-app health intelligence (`webapp/src/lib/health-engine`, `clinical-risk.ts`)
-- FastAPI Care Companion orchestration and safety copy
-- Custom EN/HI/GU dictionaries
-
-### Third-party (not claimed as our models or datasets)
-
-| Component | License / terms (use as published by vendor) | Role |
+| Who | Price | Intent |
 | --- | --- | --- |
-| React 19, React DOM | MIT | UI |
-| Vite, TypeScript | MIT | Build |
-| Tailwind CSS 4 | MIT | Styling |
-| React Router, TanStack Query, Zod, RHF | MIT | Routing, cache, validation |
+| Individual | **₹0** / **₹99**/mo | Free everyday care · Care = personal AI |
+| Family | **₹199**/mo | Up to 5 members |
+| Hospitals | **₹4,999+** / Custom | Proposed SaaS — labelled as proposed |
+| Communities | Sponsored | NGOs / CSR / public health *potential* deploy — no fake gov partnerships |
+
+---
+
+## Technology stack
+
+### This team built
+
+- Role modules (patient, doctor, caregiver, health worker, admin, identity)
+- Local store + Ahmedabad / village seed
+- In-app health intelligence (`webapp/src/lib/health-engine`, `clinical-risk.ts`)
+- FastAPI Care Companion orchestration + safety copy
+- Custom EN / HI / GU dictionaries
+- Marketing + pricing UX
+
+### Third-party (not our trained models)
+
+| Piece | Terms | Use |
+| --- | --- | --- |
+| React 19, Vite, TypeScript, Tailwind 4 | MIT | App shell |
+| React Router, TanStack Query, Zod, RHF | MIT | Routing, cache, forms |
 | Framer Motion, GSAP, Lucide, Recharts | MIT / ISC | Motion, icons, charts |
-| Three.js, R3F, Drei | MIT | Optional 3D marketing visuals |
-| Leaflet, React Leaflet, OpenStreetMap tiles | BSD / ODbL (map data) | Hospital / care-site map |
-| `@supabase/supabase-js` | Apache-2.0 | Optional Auth/DB client |
+| Three.js / R3F / Drei | MIT | Marketing 3D |
+| Leaflet + OpenStreetMap | BSD / ODbL | Care-site map tiles |
 | FastAPI, Uvicorn, Pydantic, httpx | MIT / BSD | AI service |
-| **Exa API** | Exa terms of service | Medical **search** (server-side) |
-| **OpenRouter** | OpenRouter + underlying model terms | LLM **synthesis** (server-side) |
-| **Supabase** (optional) | Supabase terms | Postgres + Auth if enabled |
+| `@supabase/supabase-js` | Apache-2.0 | Optional client |
+| **Exa** | Vendor ToS | Server-side medical **search** |
+| **OpenRouter** | Vendor + model ToS | Server-side LLM **synthesis** |
 
-We do **not** claim Exa, OpenRouter, OSM, or any public hospital list as a model “trained by the team.” Demo patients and village coordinates are **synthetic / curated for the hackathon**, not an official government dataset.
-
-Rule-based scores are **not** a trained XGBoost production model. ML hooks exist for later swap; the judged MVP uses explainable rules.
+Demo patients and village coordinates are **synthetic / curated**. Scores are **explainable rules**, not a production XGBoost we trained. We do **not** claim OSM, Exa, or OpenRouter as team-built models.
 
 ---
 
-## 5. System architecture
+## System architecture
 
-```
-┌────────────┐   ┌────────────┐   ┌────────────┐   ┌────────────┐
-│  Patient   │   │   Doctor   │   │ Caregiver  │   │ Health     │
-│  SPA       │   │   SPA      │   │  SPA       │   │ Worker SPA │
-└─────┬──────┘   └─────┬──────┘   └─────┬──────┘   └─────┬──────┘
-      │                │                │                │
-      └────────────────┴────────┬───────┴────────────────┘
-                                │
-                     webapp (Vite :5173)
-                     localStorage store  ← default demo DB
-                     in-browser risk/recovery engines
-                                │
-              optional          │          optional
-     ┌──────────────────────────┼──────────────────────────┐
-     ▼                          ▼                          ▼
- FastAPI :8001            Supabase Postgres           OSM tiles
- Exa + OpenRouter         (Auth + RLS)                (Leaflet)
- keys in ai-service/.env  keys in webapp/.env         no key
- never in GitHub          (anon key only if used)
+```mermaid
+flowchart TB
+  subgraph Client["webapp · Vite :5173"]
+    UI[Role SPAs + marketing]
+    Store[localStorage store]
+    Engines[Recovery / risk / progression]
+    UI --> Store
+    UI --> Engines
+  end
+  subgraph Optional
+    FastAPI["ai-service :8001"]
+    SB[Supabase Postgres]
+    OSM[OSM tiles]
+  end
+  UI -.-> FastAPI
+  UI -.-> SB
+  UI --> OSM
+  FastAPI --> Exa[Exa]
+  FastAPI --> OR[OpenRouter]
 ```
 
-More design notes: [`docs/HealNexus_SRS_Architecture.md`](docs/HealNexus_SRS_Architecture.md), [`docs/FINALIZED_ARCHITECTURE.md`](docs/FINALIZED_ARCHITECTURE.md).
+Keys for Exa / OpenRouter live **only** in `ai-service/.env` (or Render). Never in Vite.  
+Longer notes: [`docs/HealNexus_SRS_Architecture.md`](docs/HealNexus_SRS_Architecture.md) · [`docs/FINALIZED_ARCHITECTURE.md`](docs/FINALIZED_ARCHITECTURE.md)
+
+```text
+HealNexus/
+├── webapp/                 # MVP UI, store, engines, /pricing
+├── ai-service/             # Optional FastAPI
+├── supabase/migrations/    # Optional SQL
+├── docs/                   # SRS
+└── README.md
+```
 
 ---
 
-## 6. APIs (this repo)
+## APIs
 
-OpenAPI when the AI service is running: [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs)
+Interactive docs: [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs) when the AI service is up.
+
+<details>
+<summary><strong>Endpoint list</strong> (click to expand)</summary>
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| GET | `/health` | Service health + whether Exa/OpenRouter are configured |
-| POST | `/ai/care-companion` | Organize discharge text → schedule JSON (draft) |
+| GET | `/health` | Health + whether Exa/OpenRouter are configured |
+| POST | `/ai/care-companion` | Discharge → schedule JSON (draft) |
 | POST | `/ai/patient-summary` | Short assistive summary |
-| POST | `/ai/visit-brief` | Doctor visit brief from packed context |
-| POST | `/ai/medicine/extract` | Assistive label/text extract (not a prescription) |
-| POST | `/ai/health-assistant` | Education grounded with Exa + LLM |
-| POST | `/ai/emergency-checkup` | Triage-style education, not diagnosis |
-| POST | `/ai/education` | Localized education pack |
-| POST | `/ai/government-guidance` | PM-JAY style guidance (demo + search) |
-| POST | `/predict/recovery-score` | Optional server twin of recovery rules |
-| POST | `/predict/readmission` | Optional server twin of risk rules |
-| POST | `/predict/disease-progression` | Condition worsening (mapped conditions only) |
-| POST | `/predict/trends` | Trend narrative |
-| POST | `/predict/lifestyle-simulation` | What-if lifestyle (not a treatment change) |
-| POST | `/predict/alerts` | Alert policy |
-| POST | `/predict/explain` | Why attribution |
+| POST | `/ai/visit-brief` | Doctor visit brief |
+| POST | `/ai/medicine/extract` | Label/text extract — not a prescription |
+| POST | `/ai/health-assistant` | Education (Exa + LLM) |
+| POST | `/ai/emergency-checkup` | Education, not diagnosis |
+| POST | `/ai/education` | Localized pack |
+| POST | `/ai/government-guidance` | PM-JAY-style **demo** + search |
+| POST | `/predict/*` | Optional server twins of recovery, risk, trends, alerts, explain |
 
-The **webapp does not send Exa or OpenRouter keys**. `VITE_AI_API_BASE_URL` is only the public origin of the AI service.
+</details>
 
-CRUD for the judged demo is **not** a public REST CRUD API — it is the local store (`webapp/src/data/store`). Optional Supabase is schema-only until you set URL + anon key.
+Demo **CRUD is the local store**, not a public REST API. `VITE_AI_API_BASE_URL` is only the AI origin.
 
 ---
 
-## 7. Database
+## Database
 
-### Default (reproducible, no install)
+**Default (zero install):** `localStorage` key `healnexus-dynamic-store-v2` · seed in `webapp/src/data/store/seed.ts`.  
+`demo123` is a **public demo password**, not a production secret. Hard-refresh after a pull if seed version bumped.
 
-- Engine: browser `localStorage` key `healnexus-dynamic-store-v2`
-- Seed: `webapp/src/data/store/seed.ts` (version in `STORE_VERSION`)
-- Demo passwords (`demo123`) are **public demo accounts**, not production secrets
-
-If scores look stale after a pull, hard-refresh once so the seed version migrates.
-
-### Optional Supabase Postgres
-
-SQL under `supabase/migrations/`. Create a project, run migrations, copy URL + **anon** key into `webapp/.env`. Never commit the service role key. `SUPABASE_SERVICE_ROLE_KEY` belongs only in `ai-service/.env` if you enable server enrichment later.
+**Optional:** `supabase/migrations/` → project URL + **anon** key on the webapp. Service role never in GitHub / never in Vite.
 
 ---
 
-## 8. Setup, install, run, build
+## Quick start
 
-### Prerequisites
-
-- **Node.js 20+** (see `webapp/package.json` `engines`)
-- **npm** (lockfile: `webapp/package-lock.json`)
-- Optional AI: **Python 3.11+**, `pip`
-- Optional: Git
-
-Clone the repo, then:
-
-### Webapp (required for the prototype)
+**Need:** Node.js **20+**, npm. Optional: Python **3.11+**.
 
 ```bash
 cd webapp
-copy .env.example .env
-# Windows PowerShell: Copy-Item .env.example .env
+cp .env.example .env          # Windows: copy .env.example .env
 npm install
 npm run dev
 ```
 
-Open **http://127.0.0.1:5173** (or the URL Vite prints).
-
-Production build:
+Open **http://127.0.0.1:5173**
 
 ```bash
-cd webapp
-npm run build
-npm run preview
+npm run build && npm run preview
 ```
 
-### AI service (optional)
+### Optional AI service
 
 ```bash
 cd ai-service
 python -m venv .venv
 # Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-copy .env.example .env
-# Put EXA_API_KEY and OPENROUTER_API_KEY only here — never in webapp/.env or GitHub
+cp .env.example .env          # EXA_API_KEY + OPENROUTER_API_KEY here only
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
 ```
 
-Then in `webapp/.env`:
+`webapp/.env`: `VITE_AI_API_BASE_URL=http://127.0.0.1:8001` → restart Vite.
 
-```env
-VITE_AI_API_BASE_URL=http://127.0.0.1:8001
-```
-
-Restart `npm run dev` after changing Vite env vars.
-
-### Environment files
-
-| File | Commit? | Contents |
-| --- | --- | --- |
-| `.env.example`, `webapp/.env.example`, `ai-service/.env.example` | Yes | Placeholders only |
-| `webapp/.env`, `ai-service/.env` | **No** (gitignored) | Real keys if you have them |
-
-Obtain Exa / OpenRouter keys from those vendors. Teams must follow each vendor’s terms. Do not paste keys into slides, GitHub, or the frontend.
-
-### Deploy (Vercel + Render)
-
-**Minimum (judges can use the product):** host only `webapp` on Vercel. Demo data lives in the browser (`localStorage`). No keys required.
-
-1. Push the repo to GitHub.
-2. [Vercel](https://vercel.com) → Import project → **Root Directory: `webapp`**.
-3. Framework: Vite. Build: `npm run build`. Output: `dist`.
-4. SPA rewrites are already in `webapp/vercel.json`.
-5. Deploy. Open the `*.vercel.app` URL and use live role login.
-
-**Full (Talk to HealNexus / LLM drafts):** also host `ai-service`.
-
-1. [Render](https://render.com) → New **Web Service** → this repo → **Root Directory: `ai-service`**.
-2. Runtime: Python 3.11+. Start command:
-
-   `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-
-3. Environment (Render dashboard, never GitHub):
-
-   - `APP_ENV=production`
-   - `CORS_ORIGINS=https://YOUR-APP.vercel.app` (add the exact Vercel URL; `*.vercel.app` is also allowed in code)
-   - `EXA_API_KEY`, `OPENROUTER_API_KEY`
-   - `OPENROUTER_SITE_URL=https://YOUR-APP.vercel.app`
-
-4. Confirm `https://YOUR-RENDER-URL/health` returns `"status":"ok"`.
-5. Back on Vercel, set **Build** env:
-
-   `VITE_AI_API_BASE_URL=https://YOUR-RENDER-URL`
-
-   Redeploy the frontend so Vite bakes that URL in (it is not read at runtime).
-
-**Do not** set Exa/OpenRouter keys on Vercel. Optional Supabase: `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` on Vercel only if you actually run migrations.
+| File | Git |
+| --- | --- |
+| `*.env.example` | Yes |
+| `webapp/.env`, `ai-service/.env` | **No** |
 
 ---
 
-
-## 9. How to run a judge demo (5 minutes)
+## Five-minute demo
 
 1. `cd webapp && npm install && npm run dev`
-2. Open the app → **Dr. Ananya · Doctor** → Patients: live Recovery + risk, village rows (Sanand, Bavla, Koth, …)
-3. Sign out → **Asha · Patient** → Today + Recovery: **same numbers** as the doctor list
-4. Get help: nearest PHC / pharmacy (OSM)
-5. Optional: start `ai-service` and Talk to HealNexus
+2. **Dr. Ananya · Doctor** → Patients: live Recovery + risk, village rows
+3. Sign out → **Asha · Patient** → Today / Recovery: **same scores**
+4. Get help → nearest PHC / pharmacy
+5. Optional: AI service → Talk to HealNexus
 
-Demo User IDs (password `demo123`): `asha.patel`, `ravi.shah`, `meera.desai`, `bharat.solanki`, `leela.chauhan`, doctor live button, `priya.patel`, `kavita.solanki`, `admin`.
-
----
-
-## 10. Secrets & credentials
-
-- `.gitignore` excludes `.env`, `*.pem`, `*.key`, credential JSON
-- Demo logins are documented on purpose
-- Removed browser `VITE_EXA_API_KEY` / `X-Exa-Key` so a Vite key cannot leak to the client bundle
-
-If a key was ever pasted into chat, rotate it at the vendor.
+| Role | User ID | Password |
+| --- | --- | --- |
+| Patient | `asha.patel` · `ravi.shah` · `meera.desai` · `bharat.solanki` · `leela.chauhan` | `demo123` |
+| Doctor / Caregiver / HW / Admin | Live buttons, or `priya.patel` · `kavita.solanki` · `admin` | `demo123` |
 
 ---
 
-## 11. AI tools disclosure (put this on the PPT)
+## Deploy
 
-This product was built with **significant assistance from AI coding tools** (including Cursor) for scaffolding, refactoring, and documentation. **Team members must be able to explain every submitted flow.** AI output is **not** presented as unaided original work.
+**Judges can use Vercel alone** (`localStorage`, no keys).
 
-AI **inside the product** (Care Companion, visit brief, assistant) is a feature, disclosed here and in the UI safety copy.
+1. GitHub → Vercel → **Root Directory: `webapp`**
+2. Vite · `npm run build` · output `dist` · Node 20
+3. `webapp/vercel.json` already rewrites the SPA
+4. `VITE_*` vars = **Config**, not Secret. Do **not** put OpenRouter on Vercel
 
----
+**LLM / Exa:** Render Web Service, root `ai-service`, start:
 
-## 12. Originality / plagiarism stance
-
-HealNexus is an original continuity-of-care product concept and implementation in this repo. We did not copy another team’s hackathon repo and relabel it. Third-party libraries, OSM, Exa, and OpenRouter are identified above. Demo clinical numbers are generated by **our rules + synthetic seed**, not a stolen trained model.
-
----
-
-## Folder layout
-
-```text
-HealNexus/
-├── README.md                 # This file
-├── .env.example
-├── .gitignore
-├── webapp/                   # MVP UI + local store + health engines
-├── ai-service/               # Optional FastAPI AI
-├── supabase/migrations/      # Optional Postgres
-└── docs/                     # SRS / architecture
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
+Render env: `OPENROUTER_API_KEY`, `EXA_API_KEY`, `CORS_ORIGINS=https://your-app.vercel.app`  
+Then Vercel **build** env: `VITE_AI_API_BASE_URL=https://your-service.onrender.com` → **Redeploy**.
+
 ---
 
-## Submission checklist (rules 6–12)
+## Secrets & credentials
 
-| Rule | Status |
-| --- | --- |
-| 6. README: problem, solution, features, stack, architecture, APIs, DB, setup, run | This document |
-| 7. Working prototype / MVP, not slides only | `webapp` runnable; core features clickable |
-| 8. Reproducible install / env / DB / run / build | Sections 7–9 |
-| 9. External APIs & licenses named; keys not in GitHub | Sections 4, 6, 10 |
-| 10. No secrets in source; `.env` + `.env.example` | gitignore + examples |
-| 11. AI assistance disclosed; team must explain code | Section 11 — **also add to the PPT** |
-| 12. Not a copied project; third-party vs original named | Sections 3–4, 12 |
+- `.gitignore` covers `.env`, `*.pem`, `*.key`
+- No `VITE_EXA_API_KEY` in the client
+- Rotate any key that was pasted into chat
 
-**Still on the team:** paste Section 11 onto the presentation; do not upload `.env`; walk judges through Doctor → Patient Recovery with the same scores.
+---
+
+## AI tools disclosure
+
+**Put this on the PPT.** This product used **significant AI coding assistance** (including Cursor) for scaffolding, refactoring, and docs. **The team can explain every submitted flow.** That help is **not** unaided original work.
+
+In-product AI (companion, visit brief, assistant) is a **feature**, with the same clinical safety copy.
+
+---
+
+## Originality
+
+HealNexus is an original continuity-of-care product in this repository. Third-party libraries, OSM, Exa, and OpenRouter are named above. Clinical demo numbers come from **our rules + synthetic seed**, not a copied trained model.
+
+---
+
+<div align="center">
+
+**Healthcare continuity for everyone** — free to start, affordable to upgrade, scalable for hospitals.
+
+*AI assists. Clinicians decide.*
+
+</div>

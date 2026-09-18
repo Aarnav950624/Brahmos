@@ -76,7 +76,7 @@ function PlanCard({
           <span className="ml-1 text-xs">Save with annual billing.</span>
         </p>
       ) : (
-        <p className="mt-1 text-sm text-transparent">.</p>
+        <div className="mt-1 h-5" aria-hidden />
       )}
       <Link
         to={href}
