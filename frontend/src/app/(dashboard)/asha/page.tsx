@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Users, Home, AlertCircle, Clock, ClipboardList, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { OfflineStatus } from "@/components/offline-status";
+import { useSyncStore } from "@/stores/syncStore";
 
 export default function AshaDashboard() {
   const stats = [
