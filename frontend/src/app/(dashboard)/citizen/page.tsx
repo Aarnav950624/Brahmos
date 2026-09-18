@@ -2,7 +2,7 @@
 import { mockCitizen } from "@/lib/mock-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Heart, Shield, Stethoscope, Pill, MapPin, Search, Bell, ArrowRight } from "lucide-react";
+import { Activity, Heart, Shield, Stethoscope, Pill, MapPin, Search, Bell, ArrowRight, ClipboardList } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/stores/authStore";
@@ -90,6 +90,7 @@ export default function CitizenDashboard() {
             { label: "Emergency SOS", icon: Activity, color: "bg-red-600 text-white animate-pulse", href: "/citizen/sos" },
             { label: t("dashboard.checkSymptoms"), icon: Activity, color: "bg-red-100 text-red-700", href: "/citizen/symptom-checker" },
             { label: "Ask ArogyaAI", icon: Search, color: "bg-blue-100 text-blue-700", href: "/citizen/ask-arogyaai" },
+            { label: "Visit Brief", icon: ClipboardList, color: "bg-cyan-100 text-cyan-700", href: "/citizen/visit-brief" },
             { label: t("dashboard.healthRecords"), icon: Heart, color: "bg-pink-100 text-pink-700", href: "/citizen/health-wallet" },
             { label: t("dashboard.welfareSchemes"), icon: Shield, color: "bg-purple-100 text-purple-700", href: "/citizen/schemes" },
             { label: t("dashboard.nearbyCare"), icon: MapPin, color: "bg-emerald-100 text-emerald-700", href: "/citizen/care-map" },
