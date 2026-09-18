@@ -1,11 +1,31 @@
+"use client";
 import { mockCitizen } from "@/lib/mock-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Activity, Heart, Shield, Stethoscope, Pill, MapPin, Search } from "lucide-react";
+import { Activity, Heart, Shield, Stethoscope, Pill, MapPin, Search, Bell, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "@/stores/authStore";
+import Link from "next/link";
+
 
 export default function CitizenDashboard() {
   const { name, village, healthWallet, alerts } = mockCitizen;
+  const user = useAuthStore((state) => state.user);
+  const [nudges, setNudges] = useState<any[]>([]);
+  
+  useEffect(() => {
+    if (user) {
+      // Setup nudges
+      fetch("http://localhost:8000/api/v1/notifications/generate", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: user.id, role: user.role })
+      }).then(() => {
+        fetch(`http://localhost:8000/api/v1/notifications?user_id=${user.id}`)
+          .then(r => r.json())
+          .then(data => setNudges(data.filter((n:any) => !n.read).slice(0, 3))); // Show max 3 unread
+      });
+    }
+  }, [user]);
 
   return (
     <div className="space-y-6">
@@ -25,6 +45,39 @@ export default function CitizenDashboard() {
           </div>
         </div>
       </div>
+
+      {/* ArogyaAI Nudge Engine Updates */}
+      {nudges.length > 0 && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-5 shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Bell className="h-5 w-5 text-blue-600" /> ArogyaAI Updates
+            </h2>
+            <Link href="/citizen/notifications">
+              <Button variant="ghost" size="sm" className="text-blue-700 text-xs font-semibold">
+                View all <ArrowRight className="ml-1 h-3 w-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {nudges.map(n => (
+              <div key={n.id} className="bg-white rounded-lg p-4 border border-blue-100 shadow-sm flex flex-col justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm mb-1">{n.title}</h3>
+                  <p className="text-xs text-slate-600 line-clamp-2">{n.message}</p>
+                </div>
+                {n.action_url && (
+                  <Link href={n.action_url} className="mt-3 block">
+                    <Button size="sm" variant="outline" className="w-full text-xs border-blue-200 text-blue-700 hover:bg-blue-50">
+                      {n.action_label}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div>

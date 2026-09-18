@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
 
 import { Bell, Search, Menu, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,10 +39,18 @@ export function TopBar() {
         <div className="hidden sm:flex items-center gap-2 text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
           Demo Mode
         </div>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-slate-600" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white"></span>
-        </Button>
+        {user.role === "CITIZEN" || user.role === "ASHA_WORKER" ? (
+          <Link href={user.role === "CITIZEN" ? "/citizen/notifications" : "/asha/notifications"}>
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-5 w-5 text-slate-600" />
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white animate-pulse"></span>
+            </Button>
+          </Link>
+        ) : (
+          <Button variant="ghost" size="icon" className="relative">
+            <Bell className="h-5 w-5 text-slate-600" />
+          </Button>
+        )}
         
         <div className="flex items-center gap-3 border-l pl-4 ml-2">
           <Avatar className="h-9 w-9">
