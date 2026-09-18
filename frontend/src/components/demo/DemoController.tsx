@@ -69,7 +69,7 @@ export function DemoController() {
                 <MessageSquare className="h-4 w-4 mr-1" /> Script
               </Button>
               <Button variant="ghost" size="sm" onClick={resetDemoData} className="text-red-500 hover:text-red-600 hover:bg-red-50">
-                <RotateCcw className="h-4 w-4 mr-1" /> Reset
+                <RotateCcw className="h-4 w-4 mr-1" /> Restart Demo
               </Button>
             </div>
           </div>

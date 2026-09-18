@@ -51,7 +51,7 @@ export const useDemoStore = create<DemoStore>((set) => ({
   resetDemoData: () => {
     set({ currentStepIndex: 0 });
     if (typeof window !== 'undefined') {
-        alert('Demo data reset to baseline deterministic state.');
+        alert('Demo sequence restarted.');
     }
   }
 }));
