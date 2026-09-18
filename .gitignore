@@ -1,0 +1,12 @@
+# Backend
+backend/venv/
+backend/.env
+backend/__pycache__/
+backend/*.pyc
+
+# IDEs
+.vscode/
+.idea/
+
+# Root
+.DS_Store
