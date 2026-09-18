@@ -58,8 +58,8 @@ export default function LandingPage() {
             <Link href="/role-selection" className="px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-md shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
               Enter ArogyaAI <ArrowRight className="h-5 w-5" />
             </Link>
-            <button onClick={startDemo} className="px-8 py-4 bg-white text-blue-600 border border-blue-200 text-lg font-medium rounded-md shadow-sm hover:bg-blue-50 transition-colors flex items-center gap-2">
-              <Play className="h-5 w-5" /> Start Hackathon Demo
+            <button onClick={startDemo} aria-label="Start Hackathon Demo" className="px-8 py-4 bg-white text-blue-600 border border-blue-200 text-lg font-medium rounded-md shadow-sm hover:bg-blue-50 transition-colors flex items-center gap-2">
+              <Play className="h-5 w-5" aria-hidden="true" /> Start Hackathon Demo
             </button>
           </div>
           <div className="mt-6">
