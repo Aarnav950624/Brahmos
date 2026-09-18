@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Activity, Heart, Shield, Stethoscope, Users, Pill } from "lucide-react";
+import { ArrowRight, Activity, Heart, Shield, Stethoscope, Users, Pill, Play } from "lucide-react";
+import { useDemoStore } from "@/stores/demoStore";
 
 export default function LandingPage() {
   const [healthStatus, setHealthStatus] = useState<string>("Checking backend health...");
+  const startDemo = useDemoStore((state) => state.startDemo);
 
   useEffect(() => {
     const fetchHealth = async () => {
@@ -56,9 +58,9 @@ export default function LandingPage() {
             <Link href="/role-selection" className="px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-md shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
               Enter ArogyaAI <ArrowRight className="h-5 w-5" />
             </Link>
-            <Link href="/role-selection" className="px-8 py-4 bg-white text-slate-900 border border-slate-200 text-lg font-medium rounded-md shadow-sm hover:bg-slate-50 transition-colors">
-              Explore Demo
-            </Link>
+            <button onClick={startDemo} className="px-8 py-4 bg-white text-blue-600 border border-blue-200 text-lg font-medium rounded-md shadow-sm hover:bg-blue-50 transition-colors flex items-center gap-2">
+              <Play className="h-5 w-5" /> Start Hackathon Demo
+            </button>
           </div>
           <div className="mt-6">
             <span className="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
